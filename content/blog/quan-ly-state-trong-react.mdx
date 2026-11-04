@@ -1,0 +1,99 @@
+---
+slug: quan-ly-state-trong-react
+title: "Quản lý state trong React: Context, Jotai và Zustand"
+description: "Chọn useState, Context, Zustand hoặc Jotai theo tần suất đổi và phạm vi dùng, không theo độ phổ biến."
+category: react
+tags:
+  - react
+  - state
+  - zustand
+  - jotai
+author: BloodyCoTech
+publishedAt: "2026-11-04"
+updatedAt: "2026-11-04"
+featured: false
+draft: false
+---
+
+State trong React không thiếu thư viện. Thiếu một quy tắc để khỏi kéo store vào những thứ `useState` giải quyết được. Bài này xếp Context, Zustand 5 và Jotai 3 theo phạm vi dữ liệu và tần suất cập nhật. Không có số đo tốc độ, vì chênh lệch đó phụ thuộc cây component của từng app.
+
+Ví dụ Zustand và Jotai được kiểm tra kiểu với các gói `zustand@5.0.16` và `jotai@3.0.1`. Website này không đưa hai thư viện vào bundle trang, vì trang không cần chúng lúc chạy.
+
+## Bắt đầu trong component
+
+State của một ô nhập, một menu đang mở, hay một bước trong wizard thường chỉ có một nơi đọc. `useState` hoặc `useReducer` đặt cạnh chỗ đó. Đưa nó ra store toàn cục khiến mọi người phải tìm hành vi của một nút ở file khác.
+
+Nâng state lên cha khi hai anh em cần cùng một giá trị. Dừng lại khi cây bắt đầu truyền props qua những component không dùng giá trị đó. Đó mới là lúc xét Context hoặc một store.
+
+## Context cho giá trị ít đổi
+
+Context đưa một giá trị xuống cây mà không truyền props qua từng tầng. Theme và locale là ví dụ đúng: ít component ghi, nhiều component đọc, và giá trị không đổi mỗi frame.
+
+Nếu value là một object tạo mới trong render, mọi consumer render lại dù chỉ một field đổi. Tách giá trị và hàm cập nhật ra hai context làm hàm `setState` ổn định, còn consumer chỉ đọc theme mới render lại khi theme đổi:
+
+```tsx include=examples/theme-context.tsx
+// nạp lúc build
+```
+
+`useState` trả về một setter ổn định, nên context của setter không cần `useMemo`. Context của theme thì đổi khi theme đổi, và đó là điều bạn muốn.
+
+Đừng bỏ điểm số game, tọa độ chuột, hay tiến trình animation vào Context nếu nhiều component chỉ cần một phần. Mọi consumer của context đó bị kéo theo. Context cũng không cache dữ liệu server, không retry, và không dedupe request.
+
+## Zustand khi cần một store client có selector
+
+Zustand 5 tạo một hook store. Component chọn một lát state. Khi dùng selector trả về giá trị nguyên thủy, component chỉ render lại nếu lát đó đổi theo so sánh mặc định.
+
+Selector trả về object mới mỗi lần thì so sánh tham chiếu thất bại và component render lại thường hơn bạn nghĩ. `useShallow` so sánh nông các field của object đó:
+
+```tsx include=examples/settings-store.tsx
+// nạp lúc build
+```
+
+Store này không cần Provider. Gọi `create` ở module là một singleton. Điều đó tiện cho cài đặt giao diện, và bất tiện nếu bạn cần hai store cùng kiểu trong hai cây khác nhau, ví dụ hai game trên một trang. Lúc đó Zustand có store vanilla gắn vào context; đừng biến mọi store thành global chỉ vì ví dụ đầu tiên làm vậy.
+
+Zustand không thay dữ liệu lấy từ API. Nó không biết response nào đã cũ, không gom hai component cùng gọi một request, và không có `status` của request. Phần đó thuộc bài [TanStack Query](/blog/tanstack-query-server-state/).
+
+## Jotai khi state là nhiều mảnh nhỏ
+
+Jotai 3 giữ API quen thuộc của phiên bản 2 cho việc đọc ghi: `atom`, `useAtom`, `useAtomValue`, `useSetAtom`. Atom dẫn xuất đọc atom khác bằng `get`. Component render lại khi atom nó đọc thay đổi, không khi một store object lớn đổi.
+
+```tsx include=examples/score-atoms.tsx
+// nạp lúc build
+```
+
+`recordAtom` phụ thuộc điểm hiện tại và kỷ lục. Nút chỉ ghi `scoreAtom` và đọc kỷ lục đã tính. Đây là mô hình dễ chịu cho game có nhiều cờ nhỏ: điểm, mạng, mute, ô đang chọn.
+
+Jotai 3 bỏ một số tiện ích cũ. `atomFamily` không còn nằm trong `jotai/utils`; nó chuyển sang gói `jotai-family`. `loadable` bị gỡ. Bài này không dùng các API đó. Nếu bạn đang ở Jotai 2 và không đụng API đã deprecated, hướng dẫn migrate của Jotai nói phần lớn app chạy được trên v3.
+
+Đừng dùng Jotai để né một prop drilling hai tầng. Hai props vẫn dễ đọc hơn một atom đặt ở module mà chỉ một cây dùng.
+
+## Chọn theo câu hỏi
+
+| Nhu cầu | Chỗ đặt |
+| --- | --- |
+| Một component đọc và ghi | `useState` hoặc `useReducer` |
+| Theme, locale, ít khi đổi | Context, tách value và setter nếu object gây render thừa |
+| Client state dùng nhiều nơi, cập nhật vừa phải | Zustand, nhớ selector |
+| Nhiều giá trị nhỏ và giá trị tính từ chúng | Jotai |
+| Dữ liệu từ server, cần cache và retry | TanStack Query, không phải ba mục trên |
+| Còn sau khi tải lại trang | `localStorage`, xem bài riêng |
+
+Ba cột đầu là client state. Cột server là một bài toán khác: dữ liệu có chủ ở máy khác, có thể lỗi, có thể cũ. Trộn response API vào Zustand rồi tự viết cache thường lặp lại TanStack Query một cách kém hơn.
+
+`localStorage` cũng không phải store. Nó là chỗ ghi sau khi state đã có hình dạng ổn định, và nó lỗi được. Bài [lưu trạng thái bằng localStorage](/blog/localstorage-trang-thai-ung-dung-va-game/) tách việc đó khỏi React state.
+
+## Những lựa chọn nên tránh
+
+Đừng thêm Zustand và Jotai cùng lúc cho cùng một việc. Mỗi thư viện là một cách tìm “giá trị này sống ở đâu”. Hai cách trong một màn hình làm người đọc sau bạn mất thời gian.
+
+Đừng đưa cả ứng dụng vào một context object khổng lồ. Bạn mất lợi ích của selector và nhận lại mọi nhược điểm của value đổi liên tục.
+
+Đừng tối ưu render trước khi có một cập nhật thật sự làm giao diện giật. Tách context và dùng selector là cấu trúc đúng, không phải một mẹo cần đo đạc trước khi viết.
+
+Kiểu của store nên đi cùng pattern trong bài [TypeScript trong React](/blog/typescript-trong-react/): state và action nằm trong một type, không dùng `any` cho “đỡ lâu”.
+
+## Tài liệu
+
+- [Context trong React](https://react.dev/learn/passing-data-deeply-with-context)
+- [Zustand](https://zustand.docs.pmnd.rs/)
+- [Jotai, gồm ghi chú lên v3](https://jotai.org/docs)

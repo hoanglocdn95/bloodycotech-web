@@ -1,0 +1,166 @@
+import fs from "node:fs";
+import path from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const matter = require("gray-matter");
+
+const root = process.cwd();
+const outDir = path.join(root, "out");
+const errors = [];
+
+function fail(message) {
+  errors.push(message);
+}
+
+function walk(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...walk(full));
+    else files.push(full);
+  }
+  return files;
+}
+
+function pageUrl(file) {
+  const relative = path.relative(outDir, file).split(path.sep).join("/");
+  if (relative === "index.html") return "https://bloodycotech.com/";
+  if (relative.endsWith("/index.html")) {
+    return `https://bloodycotech.com/${relative.slice(0, -"index.html".length)}`;
+  }
+  return `https://bloodycotech.com/${relative}`;
+}
+
+function routeToFile(pathname) {
+  const decoded = decodeURIComponent(pathname);
+  if (path.posix.extname(decoded)) {
+    return path.join(outDir, decoded.replace(/^\//, ""));
+  }
+  const directory = decoded === "/" ? "" : decoded.replace(/^\//, "").replace(/\/$/, "");
+  return path.join(outDir, directory, "index.html");
+}
+
+const contentDir = path.join(root, "content/blog");
+const published = [];
+const drafts = [];
+for (const file of fs.readdirSync(contentDir).filter((name) => name.endsWith(".mdx"))) {
+  const parsed = matter(fs.readFileSync(path.join(contentDir, file), "utf8"));
+  const slug = parsed.data.slug;
+  if (parsed.data.draft) drafts.push(slug);
+  else published.push(slug);
+}
+
+const required = [
+  "index.html",
+  "404.html",
+  "blog/index.html",
+  "projects/index.html",
+  "about/index.html",
+  "contact/index.html",
+  "privacy-policy/index.html",
+  "sitemap.xml",
+  "robots.txt",
+  "icon.svg",
+];
+
+for (const relative of required) {
+  if (!fs.existsSync(path.join(outDir, relative))) fail(`Thiếu ${relative}`);
+}
+
+for (const slug of published) {
+  const file = path.join(outDir, "blog", slug, "index.html");
+  if (!fs.existsSync(file)) fail(`Thiếu bài ${slug}`);
+}
+
+for (const slug of drafts) {
+  const file = path.join(outDir, "blog", slug, "index.html");
+  if (fs.existsSync(file)) fail(`Bài draft bị xuất bản: ${slug}`);
+}
+
+const sitemap = fs.readFileSync(path.join(outDir, "sitemap.xml"), "utf8");
+const robots = fs.readFileSync(path.join(outDir, "robots.txt"), "utf8");
+if (!robots.includes("Sitemap: https://bloodycotech.com/sitemap.xml\n")) {
+  fail("robots.txt chưa trỏ sitemap production");
+}
+
+for (const slug of published) {
+  if (!sitemap.includes(`https://bloodycotech.com/blog/${slug}/`)) {
+    fail(`Sitemap thiếu ${slug}`);
+  }
+}
+for (const slug of drafts) {
+  if (sitemap.includes(slug)) fail(`Sitemap chứa draft ${slug}`);
+}
+
+const htmlFiles = walk(outDir).filter((file) => file.endsWith(".html"));
+const joined = htmlFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
+if (joined.includes("adsbygoogle")) fail("Trang đang nhúng script quảng cáo");
+if (joined.toLowerCase().includes("lorem ipsum")) fail("Còn lorem ipsum");
+if (fs.existsSync(path.join(outDir, "ads.txt"))) {
+  fail("ads.txt tồn tại trong khi chưa có dòng chính thức");
+}
+
+const anchor = /<a\b[^>]*\shref="([^"]+)"/g;
+for (const file of htmlFiles) {
+  const html = fs.readFileSync(file, "utf8");
+  for (const match of html.matchAll(anchor)) {
+    const href = match[1];
+    if (
+      href.startsWith("mailto:") ||
+      href.startsWith("http://") ||
+      href.startsWith("https://") ||
+      href.startsWith("//")
+    ) {
+      continue;
+    }
+
+    const url = new URL(href, pageUrl(file));
+    if (url.origin !== "https://bloodycotech.com") continue;
+    const target = routeToFile(url.pathname);
+    if (!fs.existsSync(target)) {
+      fail(`${path.relative(outDir, file)} -> ${href} không có file`);
+      continue;
+    }
+    if (!url.hash) continue;
+    const id = decodeURIComponent(url.hash.slice(1));
+    const targetHtml = fs.readFileSync(target, "utf8");
+    if (!targetHtml.includes(`id="${id}"`)) {
+      fail(`${path.relative(outDir, file)} -> #${id} không có id`);
+    }
+  }
+}
+
+const home = fs.readFileSync(path.join(outDir, "index.html"), "utf8");
+if (!home.includes('lang="vi"')) fail("Trang chủ thiếu lang=vi");
+if (!home.includes("bloodycotech-theme")) fail("Thiếu script theme");
+if (!home.includes('rel="canonical" href="https://bloodycotech.com/"')) {
+  fail("Canonical trang chủ không phải https://bloodycotech.com/");
+}
+if (home.includes("google-adsense-account")) {
+  fail("Trang chủ có meta AdSense trong khi publisher ID đang trống");
+}
+if (home.includes("adsbygoogle")) fail("Trang chủ đang nhúng script quảng cáo");
+
+const privacy = fs.readFileSync(path.join(outDir, "privacy-policy/index.html"), "utf8");
+if (!privacy.includes("bloodycotech-theme")) fail("Chính sách không nhắc khóa theme");
+if (!privacy.includes("chưa")) fail("Chính sách không nói rõ phần chưa bật");
+
+const contact = fs.readFileSync(path.join(outDir, "contact/index.html"), "utf8");
+if (contact.includes("mailto:")) fail("Trang liên hệ có mailto trong khi email đang trống");
+
+const localStoragePost = fs.readFileSync(
+  path.join(outDir, "blog/localstorage-trang-thai-ung-dung-va-game/index.html"),
+  "utf8",
+);
+if (!localStoragePost.includes("demo.score.v1")) fail("Bài localStorage chưa nhúng ví dụ");
+if (!localStoragePost.includes("data-language")) fail("Chưa thấy syntax highlighting");
+if (!localStoragePost.includes("Chép")) fail("Thiếu nút chép mã");
+
+if (errors.length > 0) {
+  console.error(errors.map((error) => `- ${error}`).join("\n"));
+  process.exit(1);
+}
+
+console.log(`site check passed (${published.length} bài, ${htmlFiles.length} html)`);

@@ -1,0 +1,76 @@
+---
+slug: localstorage-trang-thai-ung-dung-va-game
+title: "LocalStorage: lưu trạng thái ứng dụng và game web"
+description: "Đọc và ghi localStorage an toàn: JSON hỏng, phiên bản save, và những thứ không được lưu ở đây."
+category: web-game
+tags:
+  - localstorage
+  - web
+  - game
+author: BloodyCoTech
+publishedAt: "2026-11-04"
+updatedAt: "2026-11-04"
+featured: false
+draft: false
+---
+
+`localStorage` giữ chuỗi trên trình duyệt, theo origin, sau khi tab đóng. Nó hợp với cài đặt giao diện và một save game nhỏ. Nó không phải cơ sở dữ liệu, không đồng bộ lên server, và mọi script trên cùng origin đều đọc được. Bài này viết một lớp đọc-ghi có kiểm tra, rồi liệt kê chỗ không được dùng nó.
+
+Hàm `readSave` được chạy bằng Node với một storage giả. Phần gọi `window.localStorage` thật phụ thuộc trình duyệt và không nằm trong hàm thuần này, để test không cần DOM.
+
+## Đừng parse rồi tin
+
+`getItem` trả về string hoặc `null`. `JSON.parse` ném nếu chuỗi không phải JSON. Dữ liệu cũ, file bị sửa tay, hoặc một bản build trước ghi shape khác đều đi qua cùng một khóa. Hàm đọc phải trả về `null` khi shape không đúng, để game tạo save mới thay vì crash.
+
+```js include=examples/read-save.mjs
+// nạp lúc build
+```
+
+`version` nằm trong dữ liệu. Khi save đổi field, bạn tăng version và viết nhánh đọc bản cũ, hoặc bỏ save không hiểu. Đừng đoán. `Number.isFinite` loại `NaN` và `Infinity`, vì `JSON.parse` không tạo `NaN` nhưng một nhánh migrate tự viết có thể tạo số không hữu hạn nếu bạn tính sai.
+
+`writeSave` vẫn có thể ném. Quota phụ thuộc trình duyệt và dung lượng origin đã dùng. Một số chế độ riêng tư chặn storage. Hãy bắt lỗi ở chỗ gọi `writeSave` và cho người chơi tiếp tục ván hiện tại dù không ghi được. Nuốt lỗi âm thầm khiến họ tưởng đã lưu.
+
+## Không đụng `window` lúc render trên server
+
+Trang Next.js có phần render không có `window`. Gọi `localStorage` ở thân module hoặc trong lần render đầu của Server Component sẽ lỗi lúc build. Hàm ở trên nhận `storage` từ ngoài, nên chỗ gọi mới quyết định.
+
+Trong trình duyệt, gọi từ event handler hoặc từ `useEffect` sau khi component đã mount. Đừng đọc storage để tính state khởi tạo trên server rồi đọc lại trên client với giá trị khác: HTML sẽ không khớp và React báo lỗi hydration. Nếu cần giá trị đã lưu, render trạng thái mặc định trước, rồi cập nhật sau khi đọc ở effect, và chấp nhận một khung hình với giá trị mặc định. Hoặc chỉ dùng storage trong một widget client không render khác nhau giữa server và client.
+
+Website này lưu theme bằng khóa `bloodycotech-theme` trước khi React vẽ, bằng một script nhỏ, đúng vì theme làm đổi màu cả trang. Save game không cần chặn lần vẽ đầu theo cách đó.
+
+## Sự kiện storage không báo cho chính tab đang ghi
+
+`window` phát `storage` khi một tài liệu khác cùng origin đổi storage. Tab vừa gọi `setItem` không nhận event của chính nó. Muốn đồng bộ hai tab game, hãy lắng nghe `storage` và đọc lại save. Muốn cập nhật UI trong chính tab vừa ghi, hãy cập nhật state React ở chỗ gọi `writeSave`, đừng chờ event.
+
+Event không phải kênh tin nhắn tổng quát. Nó chỉ nói một khóa đã đổi. Đọc lại và chạy qua `readSave` để khỏi áp một chuỗi hỏng từ tab khác.
+
+## Những thứ để ngoài localStorage
+
+Không lưu access token, mật khẩu, hay dữ liệu mà một lỗi XSS có thể đọc rồi mang đi. Mọi script trên origin đọc storage như đọc biến toàn cục. Nếu sau này có đăng nhập, token cần cơ chế khác, không phải khóa `token` trong storage vì ví dụ nào đó làm vậy.
+
+Không lưu file ảnh, âm thanh, hay cả một level lớn. Storage dành cho chuỗi ngắn. Khi gần đầy, `setItem` ném. Không có một dung lượng chuẩn mà mọi trình duyệt cam kết trong bài này; hãy xử lý lỗi thay vì dựa vào một con số megabyte chép từ một blog cũ.
+
+Không dùng storage làm nguồn sự thật cho dữ liệu nhiều người cùng sửa. Không có khóa, không có merge. Hai tab ghi cùng khóa thì bản ghi sau đè bản ghi trước.
+
+Không thay một store React bằng storage. Storage là bản sao để lần sau mở lại. State đang chơi vẫn nằm trong bộ nhớ, như phần [Context, Zustand và Jotai](/blog/quan-ly-state-trong-react/) đã tách. Query server cũng không thuộc về đây; xem [TanStack Query](/blog/tanstack-query-server-state/) nếu dữ liệu có chủ trên server.
+
+## Gắn vào game nhỏ
+
+Một game web có thể giữ `{ version, score, muted }` và ghi khi người chơi bấm tạm dừng hoặc khi điểm đổi, có chặn tần suất nếu bạn ghi trong vòng lặp. Đừng `setItem` mỗi frame. Ghi khi giá trị thực sự đổi, và khi `visibilitychange` báo trang đang ẩn nếu bạn sợ người chơi đóng tab giữa trận. Vẫn phải chịu khả năng ghi thất bại.
+
+Âm thanh mute trong save chỉ là một boolean. Việc phát tiếng nằm ở [Web Audio API](/blog/web-audio-api/). Nút trên màn hình mobile nằm ở bài [giao diện game responsive](/blog/giao-dien-game-responsive/). Ba bài dùng chung một ý: input, tiếng, và save là ba đường riêng, gặp nhau ở state trong bộ nhớ.
+
+## Kiểm tra trước khi giao save cho người chơi
+
+1. Chuỗi không phải JSON trả về `null`, không ném ra UI.
+2. Sai version hoặc sai kiểu field trả về `null`.
+3. `setItem` bị bắt và game vẫn chơi tiếp.
+4. Không có bí mật trong object được `JSON.stringify`.
+5. Khóa có tiền tố riêng để khỏi đè dữ liệu của trang khác trên cùng origin lúc phát triển.
+
+Năm mục đó quan trọng hơn một thư viện wrapper. Hàm trong bài đủ cho một save nhỏ. Khi shape lớn hơn vài field, hãy viết thêm test cho từng bản version bạn còn đọc, rồi mới nghĩ tới IndexedDB nếu bạn thật sự cần nhị phân hoặc dung lượng lớn hơn chuỗi JSON ngắn.
+
+## Tài liệu
+
+- [localStorage trên MDN](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
+- [Sự kiện storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event)

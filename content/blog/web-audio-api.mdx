@@ -1,0 +1,95 @@
+---
+slug: web-audio-api
+title: "Web Audio API: tạo âm thanh tương tác trong trình duyệt"
+description: "Tạo tiếng ngắn bằng AudioContext: chờ cử chỉ người dùng, nối gain, và tránh ramp tới 0."
+category: web-game
+tags:
+  - web-audio
+  - javascript
+  - game
+author: BloodyCoTech
+publishedAt: "2026-11-04"
+updatedAt: "2026-11-04"
+featured: false
+draft: false
+---
+
+Web Audio API tổng hợp và phát tiếng trong trình duyệt. Với một game nhỏ, vài oscillator và một gain đủ cho tiếng nhặt đồ hoặc tiếng nút. Bạn không cần file nhạc để học đồ thị âm thanh. Bài này đi một tiếng ngắn, rồi nói các lỗi khiến tiếng không kêu hoặc kêu sai.
+
+Hàm `playCoin` được gọi trong Node với một context giả để kiểm tra thứ tự `start` và `stop`, và để bảo đảm không có ramp mũ tới 0. Loa thật chỉ kêu trên trình duyệt. Bài không gắn một file âm thanh mẫu vào website.
+
+## Context bắt đầu ở trạng thái suspended
+
+Trình duyệt chặn tiếng tự phát trước khi có cử chỉ của người dùng. `AudioContext` mới thường ở `suspended`. Gọi `resume` trong handler của click hoặc phím, rồi mới phát.
+
+Tạo một context cho cả trang và giữ nó. Đừng `new AudioContext()` mỗi lần kêu: trình duyệt giới hạn số context, và mỗi cái tốn tài nguyên. Tạo oscillator mới cho mỗi tiếng, vì oscillator một lần `stop` thì không start lại.
+
+```js include=examples/play-coin.mjs
+// nạp lúc build
+```
+
+Đồ thị là oscillator nối vào gain, gain nối vào `destination`. Gain là núm vặn. Không có nó, oscillator đi thẳng ra loa ở biên độ đầy đủ của dạng sóng, dễ khiến người nghe giật mình. Biên độ đỉnh `0.2` trong ví dụ là một mức thấp hơn full scale, không phải một ngưỡng an toàn đã được chuẩn hóa. Hãy nghe trên máy bạn và giảm nếu vẫn quá to.
+
+## Ramp mũ không được tới 0
+
+`exponentialRampToValueAtTime` cần giá trị đích lớn hơn 0. Ramp tới 0 ném lỗi hoặc không chạy như bạn tưởng, tùy trình duyệt. Ví dụ dùng `0.0001` làm mức sàn, đủ nhỏ để coi như im, đủ lớn để ramp hợp lệ.
+
+`stop` được đặt sau `start`. Thời điểm stop nhỏ hơn hoặc bằng thời điểm start làm tiếng không phát hoặc bị cắt ngay. Các mốc trong hàm đều cộng thêm từ `currentTime`, không dùng `Date.now`. Đồng hồ của audio context và đồng hồ của trang không hoán đổi cho nhau.
+
+`setValueAtTime` đặt điểm neo trước ramp. Thiếu điểm neo, ramp có thể tính từ giá trị mặc định mà bạn không định.
+
+## Gắn vào một nút, rồi dọn
+
+Trong React, đừng tạo context ở thân module. Module có thể được đánh giá trong môi trường không có `window` lúc build. Tạo context trong handler:
+
+```tsx
+let audioContext: AudioContext | null = null;
+
+function getAudioContext(): AudioContext {
+  if (!audioContext) audioContext = new AudioContext();
+  return audioContext;
+}
+
+export async function onPress() {
+  const context = getAudioContext();
+  if (context.state === "suspended") await context.resume();
+  playCoin(context);
+}
+```
+
+Biến `audioContext` ở đây nằm trong module của widget client, sau khi đã vào trình duyệt. Nếu bạn muốn đóng context khi rời trang, gọi `close` trong cleanup và gán lại `null`. Đừng `close` sau mỗi tiếng: lần bấm sau phải tạo context mới và lại cần một cử chỉ để resume.
+
+Nếu game có nút mute, đừng hủy context. Nhân gain với 0 hoặc bỏ qua lời gọi `playCoin`. Boolean mute có thể nằm trong save, như bài [localStorage](/blog/localstorage-trang-thai-ung-dung-va-game/) đã nói, nhưng quyết định có gọi `playCoin` hay không thuộc state trong bộ nhớ.
+
+## File âm thanh là đường khác
+
+`fetch` một file rồi `decodeAudioData` cho ra `AudioBuffer`. Bạn phát buffer bằng `AudioBufferSourceNode`, cũng là node một lần. Oscillator hợp với tiếng tổng hợp. Buffer hợp với tiếng đã thu. Đừng decode lại cùng một file mỗi lần bấm; giữ buffer.
+
+File tĩnh trên một site export chỉ là URL trong `public/`. Không có server xử lý audio. Nếu file 404, `decodeAudioData` không chạy. Hãy kiểm tra response trước khi decode.
+
+Autoplay một soundtrack lúc tải trang sẽ bị chặn, và cũng khó chịu với người đang đọc một bài viết. Một bài blog không nên phát tiếng khi scroll. Game thì đợi người chơi bấm Bắt đầu, rồi mới `resume`.
+
+## Những việc không nên làm
+
+Đừng nối nhiều oscillator vô hạn mà không `stop`. Chúng chạy cho đến khi context đóng.
+
+Đừng đặt tần số 0 vào `exponentialRampToValueAtTime`. Cùng quy tắc với gain: đích của ramp mũ phải dương. Đổi tần số tuyến tính thì dùng `linearRampToValueAtTime`, hàm này chấp nhận 0.
+
+Đừng dùng Web Audio để phát một đoạn chữ dài thay cho nội dung trang. Đó là âm thanh phụ, không phải cách đưa thông tin chính tới người không nghe được. Nút vẫn cần nhãn chữ. Bài [giao diện game](/blog/giao-dien-game-responsive/) nói về nút đó trên mobile.
+
+Đừng giả định mọi máy có cùng độ trễ. `currentTime` là đồng hồ của context, không phải milliseconds hiển thị. Nếu bạn cần tiếng khớp animation, lên lịch bằng thời gian của context, rồi chấp nhận một độ trễ nhỏ của thiết bị.
+
+## Kiểm tra một tiếng mới
+
+1. Context được `resume` trong cử chỉ, không phải lúc import module.
+2. Mỗi lần kêu tạo node mới, nối gain, rồi mới `start`.
+3. Không có ramp mũ tới 0 hoặc tới tần số 0.
+4. `stop` nằm sau `start`.
+5. Có cách tắt tiếng không phụ thuộc vào việc xóa context.
+
+Năm mục đó đủ cho hiệu ứng ngắn. Nhạc nền có vòng lặp, nhiều track, và fade giữa cảnh là một lớp khác: bạn sẽ cần lịch `currentTime` cẩn thận hơn và một chỗ giữ các node đang chạy để dừng chúng khi đổi cảnh. Đừng bắt đầu từ thư viện nếu một oscillator chưa kêu đúng.
+
+## Tài liệu
+
+- [Web Audio API trên MDN](https://developer.mozilla.org/docs/Web/API/Web_Audio_API)
+- [AudioContext.resume](https://developer.mozilla.org/docs/Web/API/AudioContext/resume)

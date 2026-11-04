@@ -5,23 +5,46 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/write-ads-txt.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.examples.json --noEmit",
+    "test:examples": "node scripts/test-examples.mjs",
+    "check:site": "node scripts/check-site.mjs",
+    "verify": "pnpm run typecheck && pnpm run lint && pnpm run test:examples && pnpm run build && pnpm run check:site"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "lucide-react": "^1.68.0",
     "next": "16.4.5",
+    "next-mdx-remote": "^6.0.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "rehype-pretty-code": "^0.14.6",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
+    "@tailwindcss/postcss": "^4.3.4",
+    "@tanstack/react-query": "5.105.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+    "jotai": "3.0.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zustand": "5.0.16"
   },
-  "packageManager": "pnpm@10.11.0"
+  "packageManager": "pnpm@10.11.0",
+  "pnpm": {
+    "overrides": {
+      "magic-string": "0.30.21"
+    }
+  }
 }
