@@ -13,7 +13,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className="inline-flex size-10 items-center justify-center rounded-full border border-line bg-surface text-ink"
+      className="hud-button"
       aria-label="Đổi giao diện sáng hoặc tối"
       onClick={() => {
         const next = document.documentElement.classList.contains("dark") ? "light" : "dark";

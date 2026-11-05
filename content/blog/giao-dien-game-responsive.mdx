@@ -9,14 +9,14 @@ tags:
   - responsive
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: true
 draft: false
 ---
 
-Một game web hay chết ở lớp điều khiển, không phải ở vòng lặp. Trên máy tính, người chơi dùng phím. Trên điện thoại, họ dùng ngón tay, thanh địa chỉ thu nhỏ khung nhìn, và vùng an toàn của tai thỏ. Bài này gom cả hai vào cùng một danh sách action, rồi đặt CSS để ngón tay không kéo cả trang đi.
+Lần đầu đưa một game bàn phím lên điện thoại, mình thường không vướng ở vòng lặp game mà vướng ngay nút nhảy. Ngón tay che màn hình, thanh địa chỉ làm viewport thay đổi, còn một cú vuốt có thể kéo cả trang thay vì điều khiển nhân vật. Cách đỡ rối nhất là coi phím và nút cảm ứng chỉ là hai nguồn input cùng phát ra một action.
 
-Hàm đổi mã phím thành action được test trong Node. Phần lắng nghe sự kiện thật nằm ở component, vì cần một phần tử DOM.
+Phần dưới bắt đầu từ action, sau đó mới nối bàn phím và pointer event. Hàm đổi mã phím được test riêng trong Node; component chỉ giữ phần thật sự cần DOM.
 
 ## Action trước, thiết bị sau
 

@@ -10,14 +10,14 @@ tags:
   - jotai
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: false
 draft: false
 ---
 
-State trong React không thiếu thư viện. Thiếu một quy tắc để khỏi kéo store vào những thứ `useState` giải quyết được. Bài này xếp Context, Zustand 5 và Jotai 3 theo phạm vi dữ liệu và tần suất cập nhật. Không có số đo tốc độ, vì chênh lệch đó phụ thuộc cây component của từng app.
+Khi một app bắt đầu có nhiều màn hình, câu hỏi “dùng store nào?” thường đến sớm hơn câu hỏi “ai thật sự cần dữ liệu này?”. Mình thấy đảo thứ tự hai câu đó giúp code nhẹ hơn: bắt đầu ở component, nâng state khi có thêm người dùng, rồi mới chọn Context hay store.
 
-Ví dụ Zustand và Jotai được kiểm tra kiểu với các gói `zustand@5.0.16` và `jotai@3.0.1`. Website này không đưa hai thư viện vào bundle trang, vì trang không cần chúng lúc chạy.
+Các ví dụ dùng Zustand 5 và Jotai 3, được typecheck riêng. Hai package chỉ phục vụ snippet nên không bị kéo vào bundle của website.
 
 ## Bắt đầu trong component
 

@@ -8,7 +8,7 @@ import { breadcrumbJsonLd, createMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 const description =
-  "Cách liên hệ BloodyCoTech. Website chỉ hiển thị email khi địa chỉ chính thức đã được cấu hình.";
+  "Nơi gửi một correction, góp ý cách giải thích hoặc trao đổi cụ thể về công việc frontend.";
 
 export const metadata: Metadata = createMetadata({
   title: "Liên hệ",
@@ -32,7 +32,7 @@ export default function ContactPage() {
         ]}
       />
       <div className="mt-6">
-        <PageHeader eyebrow="Liên hệ" title="Liên hệ" description={description} />
+        <PageHeader eyebrow="MESSAGE_CHANNEL" title="Liên hệ" description={description} />
       </div>
       <div className="article-body mt-8 max-w-3xl">
         {site.contactEmail ? (
@@ -44,24 +44,22 @@ export default function ContactPage() {
           </>
         ) : (
           <>
-            <h2>Email chưa được công bố</h2>
+            <h2>Hộp thư chưa mở</h2>
             <p>
-              BloodyCoTech chưa có địa chỉ email chính thức trên website. Trang này không dùng
-              địa chỉ giả và không có biểu mẫu, vì không có máy chủ để nhận dữ liệu. Khi email
-              được thêm vào cấu hình, nó sẽ hiện tại đây, ở chân trang và trong chính sách bảo mật.
+              Mình chưa cấu hình địa chỉ công khai nên sẽ không đặt một form bấm gửi nhưng chẳng
+              đi đâu. Khi hộp thư sẵn sàng, địa chỉ sẽ xuất hiện ở đây và dưới chân trang.
             </p>
           </>
         )}
-        <h2>Nên viết gì khi đã có hộp thư</h2>
-        <p>Hộp thư dự kiến dùng cho ba việc:</p>
+        <h2>Một tin nhắn hữu ích nên có gì?</h2>
         <ul>
           <li>Báo một lỗi kỹ thuật trong bài, kèm đường dẫn bài và đoạn code liên quan.</li>
           <li>Góp ý về cách giải thích, nếu chỗ đó không khớp tài liệu được trích.</li>
-          <li>Trao đổi về một sản phẩm khi BloodyCoTech đã có bản phát hành công khai.</li>
+          <li>Một đề nghị công việc hoặc trao đổi dự án có bối cảnh và đầu việc cụ thể.</li>
         </ul>
         <p>
-          Website không nhận hỗ trợ bài tập, không sửa dự án riêng của người đọc, và không đăng
-          bài viết khách để đổi liên kết.
+          Mình không nhận bài guest post để đổi backlink và khó hỗ trợ debug một repository riêng
+          nếu không có ví dụ tối thiểu để tái hiện.
         </p>
         <h2>Trong lúc chưa có email</h2>
         <p>

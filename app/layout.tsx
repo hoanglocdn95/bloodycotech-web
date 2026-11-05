@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, IBM_Plex_Mono } from "next/font/google";
+import { Be_Vietnam_Pro, Chakra_Petch, IBM_Plex_Mono } from "next/font/google";
 import Script from "next/script";
 import { JsonLd } from "@/components/json-ld";
+import { DocumentLocale } from "@/components/document-locale";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SkipLink } from "@/components/skip-link";
@@ -11,15 +12,22 @@ import "./globals.css";
 
 const sans = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
   variable: "--font-be-vietnam",
   display: "swap",
 });
 
 const mono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400"],
   variable: "--font-ibm-mono",
+  display: "swap",
+});
+
+const display = Chakra_Petch({
+  subsets: ["latin", "vietnamese"],
+  weight: ["600", "700"],
+  variable: "--font-chakra",
   display: "swap",
 });
 
@@ -61,13 +69,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="vi"
-      className={`${sans.variable} ${mono.variable} h-full antialiased`}
+      className={`${sans.variable} ${mono.variable} ${display.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-dvh flex-col bg-bg font-sans text-ink">
         <Script id="theme-init" strategy="beforeInteractive">
           {themeInitScript}
         </Script>
+        <DocumentLocale />
         <SkipLink />
         <SiteHeader />
         <main id="main" className="flex-1">

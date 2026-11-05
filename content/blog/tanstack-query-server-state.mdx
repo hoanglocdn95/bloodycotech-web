@@ -9,16 +9,16 @@ tags:
   - server-state
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: true
 draft: false
 ---
 
-Server state là dữ liệu có chủ ở nơi khác. Nó có thể đến chậm, lỗi, hoặc cũ hơn bản trên server. Client state là menu đang mở, theme, điểm trong game. TanStack Query làm việc thứ nhất. Nó không thay `useState`, Zustand hay Jotai.
+Mình từng thấy một màn hình có cả `isLoading`, `error`, `data`, `lastFetchedAt` và logic refetch tự viết trong component. Code không sai, nhưng nó đang tự dựng lại một lớp cache. TanStack Query hữu ích đúng ở đoạn đó: dữ liệu có chủ ở server, có thể đến chậm, lỗi hoặc cũ.
 
-Bài này bám API object của TanStack Query v5, đối chiếu với `@tanstack/react-query` 5.105. Từ v5, các hook chỉ nhận một object. Dạng `useQuery(key, fn, options)` của các bài cũ không còn đúng.
+Bài dùng API object của TanStack Query v5 (`@tanstack/react-query` 5.105). Nếu bạn gặp snippet `useQuery(key, fn, options)`, đó là dấu hiệu cần kiểm tra lại phiên bản.
 
-Website BloodyCoTech là trang tĩnh, không có API người dùng, nên gói này không nằm trong bundle trang. Ví dụ dưới đây được kiểm tra kiểu để bảo đảm các option còn tồn tại.
+BloodyCoTech chưa có API người dùng, nên package chỉ typecheck ví dụ và không nằm trong bundle trang.
 
 ## Một query là một key và một hàm
 

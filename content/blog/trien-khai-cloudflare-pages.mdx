@@ -9,14 +9,14 @@ tags:
   - static-site
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: false
 draft: false
 ---
 
-Cloudflare Pages phục vụ file tĩnh và có thể chạy Functions. Một website Next.js chỉ cần HTML, CSS và JS thì đi đường static export: build ra thư mục `out`, Pages phân phối thư mục đó. Bài này ghi các thiết lập cần có và những tính năng sẽ vỡ nếu bạn vẫn giả định có server Node.
+BloodyCoTech không cần một server Node chạy suốt ngày. Mỗi lần build, Next.js tạo HTML, CSS và JavaScript trong `out`; Cloudflare Pages chỉ việc phân phối các file đó. Cách này rẻ và dễ hiểu, đổi lại mình phải bỏ những tính năng cần xử lý request tại server.
 
-Đây là hướng dẫn cấu hình, không phải báo cáo một lần deploy đã đo thời gian. Tên miền, chứng chỉ và redirect `www` phụ thuộc tài khoản Cloudflare của bạn. Tài liệu được dẫn ở cuối là chỗ đối chiếu giao diện hiện tại, vì dashboard có thể đổi nhãn.
+Mình ghi lại cấu hình đã dùng và ranh giới của static export. Phần dashboard, DNS và quota có thể đổi theo thời gian, nên cuối bài luôn dẫn tài liệu Cloudflare thay vì đóng đinh một ảnh chụp màn hình.
 
 ## Ba dòng làm Next.js thành site tĩnh
 

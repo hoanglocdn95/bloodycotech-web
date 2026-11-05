@@ -8,14 +8,14 @@ tags:
   - react
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: false
 draft: false
 ---
 
-TypeScript không làm giao diện đúng hơn về mặt sản phẩm. Nó chặn một lớp lỗi ngay khi gõ: props không tồn tại, nhánh không được xử lý, và cấu hình gõ nhầm tên field. Bài này giữ ba pattern đủ dùng cho component React, rồi chỉ chỗ không nên thêm kiểu cho có vẻ chắc.
+TypeScript không biết nút màu đỏ có khiến người dùng bối rối hay không. Nó chỉ giúp mình chặn những lỗi như truyền sai biến thể props, bỏ quên một nhánh hoặc gõ sai tên cấu hình. Ba pattern dưới đây là những thứ mình muốn nhớ khi viết component, không phải một bộ sưu tập type gymnastics.
 
-Ví dụ được kiểm tra bằng `tsc` với TypeScript 5.9 và kiểu của React 19. Chúng là module nhỏ, không phải một ứng dụng hoàn chỉnh.
+Các snippet được chạy qua `tsc` với TypeScript 5.9 và type của React 19. Mỗi ví dụ cố tình nhỏ để nhìn thấy quan hệ kiểu, không giả làm một ứng dụng hoàn chỉnh.
 
 ## Props có nhánh loại trừ nhau
 

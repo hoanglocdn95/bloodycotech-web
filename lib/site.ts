@@ -50,8 +50,8 @@ export const site = {
   locale: "vi_VN",
   language: "vi",
   description:
-    "Developer blog tiếng Việt về React, TypeScript và game trên web. Sản phẩm độc lập chỉ được giới thiệu khi có bản phát hành thật.",
-  contentUpdatedAt: "2026-11-04",
+    "Góc web cá nhân để ghi chép frontend, ôn phỏng vấn và chia sẻ những game hoặc công cụ nhỏ đang được xây dựng.",
+  contentUpdatedAt: "2026-11-05",
   themeStorageKey: "bloodycotech-theme",
   authorName: "BloodyCoTech",
   contactEmail: readEmail(integrations.contactEmail),

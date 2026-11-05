@@ -13,6 +13,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/about/", lastModified: site.contentUpdatedAt },
     { path: "/contact/", lastModified: site.contentUpdatedAt },
     { path: "/privacy-policy/", lastModified: site.contentUpdatedAt },
+    { path: "/interview/", lastModified: site.contentUpdatedAt },
+    { path: "/en/", lastModified: site.contentUpdatedAt },
+    { path: "/en/projects/", lastModified: site.contentUpdatedAt },
+    { path: "/en/about/", lastModified: site.contentUpdatedAt },
+    { path: "/en/contact/", lastModified: site.contentUpdatedAt },
+    { path: "/en/privacy-policy/", lastModified: site.contentUpdatedAt },
+    { path: "/en/interview/", lastModified: site.contentUpdatedAt },
   ];
 
   return [

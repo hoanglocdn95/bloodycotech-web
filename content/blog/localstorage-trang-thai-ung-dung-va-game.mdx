@@ -9,14 +9,14 @@ tags:
   - game
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: false
 draft: false
 ---
 
-`localStorage` giữ chuỗi trên trình duyệt, theo origin, sau khi tab đóng. Nó hợp với cài đặt giao diện và một save game nhỏ. Nó không phải cơ sở dữ liệu, không đồng bộ lên server, và mọi script trên cùng origin đều đọc được. Bài này viết một lớp đọc-ghi có kiểm tra, rồi liệt kê chỗ không được dùng nó.
+`localStorage` rất dễ tạo cảm giác “lưu được rồi”: gọi `setItem`, reload trang, dữ liệu vẫn còn. Phần khó chỉ xuất hiện sau đó—JSON hỏng, schema đổi, quota đầy hoặc người dùng mở hai tab. Với theme hay một save game nhỏ, nó vẫn là công cụ vừa đủ nếu phần đọc được viết phòng thủ.
 
-Hàm `readSave` được chạy bằng Node với một storage giả. Phần gọi `window.localStorage` thật phụ thuộc trình duyệt và không nằm trong hàm thuần này, để test không cần DOM.
+Mình tách hàm `readSave` khỏi `window` để có thể chạy nó với storage giả trong Node. Nhờ vậy các case dữ liệu bẩn được test mà không phải dựng browser.
 
 ## Đừng parse rồi tin
 

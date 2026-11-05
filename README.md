@@ -1,6 +1,6 @@
 # BloodyCoTech
 
-Website tĩnh của BloodyCoTech: blog kỹ thuật tiếng Việt và nơi giới thiệu sản phẩm độc lập khi đã có bản phát hành thật.
+Website tĩnh của BloodyCoTech: góc web cá nhân cho blog kỹ thuật tiếng Việt, bộ ôn phỏng vấn song ngữ và hàng đợi sản phẩm nhỏ.
 
 - Tagline: Code. Build. Play.
 - Production dự kiến: https://bloodycotech.com
@@ -45,7 +45,9 @@ public/              icon, _headers
 scripts/             ads.txt, test ví dụ, kiểm tra out/
 ```
 
-Route đang có: `/`, `/blog/`, `/blog/[slug]/`, `/projects/`, `/about/`, `/contact/`, `/privacy-policy/`, `sitemap.xml`, `robots.txt`, `404`. Chưa có `/games` hay `/tools`.
+Route tiếng Việt: `/`, `/blog/`, `/blog/[slug]/`, `/interview/`, `/projects/`, `/about/`, `/contact/`, `/privacy-policy/`.
+
+Route tiếng Anh: `/en/`, `/en/interview/`, `/en/projects/`, `/en/about/`, `/en/contact/`, `/en/privacy-policy/`. Bài blog chưa dịch; language switch từ bài viết quay về trang chủ tiếng Anh.
 
 ## Thêm bài blog
 
@@ -92,7 +94,7 @@ Bài `featured: true` được ưu tiên trên trang chủ. `cover` là đườn
 
 ## Cấu hình liên hệ và AdSense
 
-Sửa `config/integrations.json`. Để trống cho đến khi có dữ liệu thật.
+Sửa `config/integrations.json`. Chỉ điền bằng dữ liệu thật từ tài khoản tương ứng.
 
 | Trường | Khi nào điền |
 | --- | --- |

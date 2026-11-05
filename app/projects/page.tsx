@@ -11,7 +11,7 @@ import { breadcrumbJsonLd, createMetadata } from "@/lib/seo";
 import { formatDate } from "@/lib/format";
 
 const description =
-  "Định hướng sản phẩm độc lập của BloodyCoTech. Chỉ liệt kê dự án khi có bản phát hành công khai.";
+  "Hàng đợi công khai cho thử nghiệm, sản phẩm đang làm, bản đã phát hành và những thứ đã lưu kho.";
 
 export const metadata: Metadata = createMetadata({
   title: "Dự án",
@@ -45,19 +45,18 @@ export default function ProjectsPage() {
         ]}
       />
       <div className="mt-6">
-        <PageHeader eyebrow="Studio" title="Dự án" description={description} />
+        <PageHeader eyebrow="BUILD_QUEUE" title="Dự án" description={description} />
       </div>
       <div className="article-body mt-8 max-w-3xl">
         <p>
-          BloodyCoTech viết blog trước, rồi mới khoe sản phẩm. Hướng làm là các web game,
-          công cụ tương tác và phần mềm nhỏ có thể chạy trên web. Một mục trên trang này cần đủ
-          ba thứ: tên thật, mô tả đúng việc sản phẩm làm, và đường dẫn tới bản phát hành mà người
-          đọc mở được.
+          Mình từng đặt tiêu chuẩn “chỉ hiện khi phát hành xong”, nhưng cách đó làm mọi thứ đang
+          học biến mất khỏi trang. Từ bây giờ, thử nghiệm có thể xuất hiện sớm hơn—miễn là có thứ
+          để mở, trạng thái rõ ràng và ghi đúng phần còn thiếu.
         </p>
         <p>
-          Không có lời chứng thực, lượt tải hay ảnh chụp được bịa để trang trông đầy hơn. Khi một
-          sản phẩm chưa ra mắt, nó không xuất hiện ở đây. Các bài về âm thanh, lưu trạng thái và
-          giao diện game là phần chuẩn bị kỹ thuật, không phải thông báo phát hành.
+          Mỗi dự án sẽ thuộc một trong bốn trạng thái: <strong>thử nghiệm</strong>,{" "}
+          <strong>đang làm</strong>, <strong>đã phát hành</strong> hoặc <strong>lưu kho</strong>.
+          Không có số người dùng, testimonial hay tiến độ được bịa để lấp chỗ trống.
         </p>
         {preparation.length > 0 ? (
           <>
@@ -74,13 +73,13 @@ export default function ProjectsPage() {
       </div>
       <section className="mt-10" aria-labelledby="released-heading">
         <h2 id="released-heading" className="text-2xl font-semibold tracking-tight">
-          Sản phẩm đang công khai
+          Bản có thể mở ngay
         </h2>
         {projects.length === 0 ? (
           <div className="mt-4">
-            <EmptyState title="Chưa có sản phẩm công khai">
-              Danh sách đang trống vì chưa có bản phát hành để kiểm chứng. Khi có, mỗi mục sẽ kèm
-              ngày phát hành và liên kết ra sản phẩm.
+            <EmptyState title="Hàng đợi hiện chưa có bản chơi được">
+              Đây là trạng thái thật ở thời điểm hiện tại. Mục ôn phỏng vấn là phần lớn đầu tiên
+              được thêm trong lần dựng lại này; thử nghiệm game sẽ chỉ lên đây khi có URL chạy được.
             </EmptyState>
           </div>
         ) : (

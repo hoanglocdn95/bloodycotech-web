@@ -8,7 +8,7 @@ import { getPublishedPosts } from "@/lib/posts";
 import { breadcrumbJsonLd, createMetadata } from "@/lib/seo";
 
 const description =
-  "Bài viết về React, TypeScript, quản lý state và kỹ thuật làm game chạy trong trình duyệt.";
+  "Ghi chú kỹ thuật mình muốn tìm lại sau này: React, TypeScript, browser API và những mảnh nhỏ để làm game trên web.";
 
 export const metadata: Metadata = createMetadata({
   title: "Blog",
@@ -35,8 +35,8 @@ export default function BlogPage() {
       />
       <div className="mt-6">
         <PageHeader
-          eyebrow="Blog"
-          title="Bài viết"
+          eyebrow="QUEST_LOG"
+          title="Ghi chú kỹ thuật"
           description={description}
         />
       </div>

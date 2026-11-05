@@ -18,19 +18,32 @@ export function createMetadata({
   article,
 }: PageMetaInput): Metadata {
   const url = absoluteUrl(path);
+  const isEnglish = path === "/en/" || path.startsWith("/en/");
+  const isBlog = path === "/blog/" || path.startsWith("/blog/");
+  const vietnamesePath = isEnglish ? path.replace(/^\/en(?=\/)/, "") : path;
+  const englishPath = isEnglish ? path : path === "/" ? "/en/" : `/en${path}`;
   const socialTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.tagline}`;
 
   return {
     ...(title ? { title } : {}),
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: isBlog
+        ? { vi: absoluteUrl(path), "x-default": absoluteUrl(path) }
+        : {
+            vi: absoluteUrl(vietnamesePath || "/"),
+            en: absoluteUrl(englishPath),
+            "x-default": absoluteUrl(vietnamesePath || "/"),
+          },
+    },
     openGraph: article
       ? {
           title: socialTitle,
           description,
           url,
           siteName: site.name,
-          locale: site.locale,
+          locale: isEnglish ? "en_US" : site.locale,
           type: "article",
           publishedTime: article.publishedAt,
           modifiedTime: article.updatedAt,
@@ -42,7 +55,7 @@ export function createMetadata({
           description,
           url,
           siteName: site.name,
-          locale: site.locale,
+          locale: isEnglish ? "en_US" : site.locale,
           type: "website",
         },
     twitter: {

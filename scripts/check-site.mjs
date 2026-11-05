@@ -60,6 +60,13 @@ const required = [
   "about/index.html",
   "contact/index.html",
   "privacy-policy/index.html",
+  "interview/index.html",
+  "en/index.html",
+  "en/interview/index.html",
+  "en/projects/index.html",
+  "en/about/index.html",
+  "en/contact/index.html",
+  "en/privacy-policy/index.html",
   "sitemap.xml",
   "robots.txt",
   "icon.svg",
@@ -98,8 +105,13 @@ const htmlFiles = walk(outDir).filter((file) => file.endsWith(".html"));
 const joined = htmlFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
 if (joined.includes("adsbygoogle")) fail("Trang đang nhúng script quảng cáo");
 if (joined.toLowerCase().includes("lorem ipsum")) fail("Còn lorem ipsum");
-if (fs.existsSync(path.join(outDir, "ads.txt"))) {
-  fail("ads.txt tồn tại trong khi chưa có dòng chính thức");
+const adsTxtPath = path.join(outDir, "ads.txt");
+if (!fs.existsSync(adsTxtPath)) fail("Thiếu ads.txt đã cấu hình");
+else if (
+  fs.readFileSync(adsTxtPath, "utf8").trim() !==
+  "google.com, pub-4663633976089574, DIRECT, f08c47fec0942fa0"
+) {
+  fail("ads.txt không khớp publisher ID đã cấu hình");
 }
 
 const anchor = /<a\b[^>]*\shref="([^"]+)"/g;
@@ -138,9 +150,7 @@ if (!home.includes("bloodycotech-theme")) fail("Thiếu script theme");
 if (!home.includes('rel="canonical" href="https://bloodycotech.com/"')) {
   fail("Canonical trang chủ không phải https://bloodycotech.com/");
 }
-if (home.includes("google-adsense-account")) {
-  fail("Trang chủ có meta AdSense trong khi publisher ID đang trống");
-}
+if (!home.includes('name="google-adsense-account"')) fail("Trang chủ thiếu meta xác minh AdSense");
 if (home.includes("adsbygoogle")) fail("Trang chủ đang nhúng script quảng cáo");
 
 const privacy = fs.readFileSync(path.join(outDir, "privacy-policy/index.html"), "utf8");
@@ -149,6 +159,13 @@ if (!privacy.includes("chưa")) fail("Chính sách không nói rõ phần chưa 
 
 const contact = fs.readFileSync(path.join(outDir, "contact/index.html"), "utf8");
 if (contact.includes("mailto:")) fail("Trang liên hệ có mailto trong khi email đang trống");
+
+const interview = fs.readFileSync(path.join(outDir, "interview/index.html"), "utf8");
+if (!interview.includes("Core Web Vitals")) fail("Trang ôn phỏng vấn thiếu nội dung performance");
+if (!interview.includes("AbortController")) fail("Trang ôn phỏng vấn thiếu ví dụ hủy request");
+
+const englishHome = fs.readFileSync(path.join(outDir, "en/index.html"), "utf8");
+if (!englishHome.includes("Personal developer log")) fail("Trang tiếng Anh chưa được xuất bản");
 
 const localStoragePost = fs.readFileSync(
   path.join(outDir, "blog/localstorage-trang-thai-ung-dung-va-game/index.html"),

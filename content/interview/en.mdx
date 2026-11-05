@@ -1,0 +1,278 @@
+> Updated on November 5, 2026 for the Frontend ReactJS role in the supplied job description. The goal is not to memorize model answers. You should be able to explain a decision, write a small feature, and discuss its trade-offs.
+
+## 0. Read the role like an engineer
+
+This role needs someone who can turn a specification into components, integrate an API, manage asynchronous state, test on several screen sizes, and move code through review. React is only one layer. Expect questions about JavaScript, the browser, CSS, delivery, and communication.
+
+Rate every topic at three levels:
+
+- **Know:** explain the concept in your own words.
+- **Can do:** write a small example without copying.
+- **Have debugged:** describe a failure, your investigation, and the trade-off in the fix.
+
+If you lack production experience with a scenario, do not invent it. Say what you have not done, then explain how you would investigate it. Honest reasoning survives follow-up questions.
+
+## 1. HTML and browser foundations
+
+Use native semantics before adding ARIA. A `button` performs an action, an `a` navigates, a `label` names a control, and headings describe the document hierarchy. A clickable `div` makes you recreate keyboard, focus, and accessibility behavior that the browser already provides.
+
+```tsx
+export function SearchForm() {
+  return (
+    <form role="search">
+      <label htmlFor="keyword">Keyword</label>
+      <input id="keyword" name="q" type="search" autoComplete="off" />
+      <button type="submit">Search</button>
+    </form>
+  );
+}
+```
+
+Be ready to explain DOM event capture/target/bubble, the difference between `preventDefault()` and `stopPropagation()`, how `defer` differs from `async`, and why native forms give you useful keyboard and submission behavior.
+
+**Practice:** build a confirmation dialog. Escape closes it, focus cannot fall behind it, and focus returns to its trigger. Then explain when the native `<dialog>` element is a good choice.
+
+## 2. CSS and defensive responsive design
+
+Responsive design is not a list of popular devices. Start with one flexible column, let content determine breakpoints, and test long text, browser zoom, larger fonts, narrow screens, and uneven data.
+
+```css
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.card-grid > * { min-width: 0; }
+img, video { max-width: 100%; height: auto; }
+```
+
+`min-width: 0` matters inside Grid and Flexbox. The default min-content size of a code block, table, or long URL can push the entire page wider than the viewport.
+
+Best practices:
+
+- Use `rem` where sizing should respect the user's font preference.
+- Use `clamp()` for fluid values with safe limits.
+- Keep reading columns around 60–75 characters.
+- Consider container queries for reusable components.
+- Test keyboard use, 200% zoom, dark mode, reduced motion, and unbroken strings.
+
+**Practice:** create a product grid that starts at one column at 360px and adds columns only when space permits. Three-line titles must not misalign actions.
+
+[MDN responsive design guide](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design).
+
+## 3. JavaScript fundamentals that expose weak spots
+
+`let` and `const` have block scope; `var` has function scope and confusing hoisting behavior. A closure lets a function retain access to the lexical environment where it was created. Hooks, handlers, debounce, and memoization all rely on this foundation.
+
+```js
+console.log("A");
+setTimeout(() => console.log("B"), 0);
+Promise.resolve().then(() => console.log("C"));
+console.log("D");
+// A, D, C, B
+```
+
+Promise callbacks enter the microtask queue and normally run before the next timer task once the call stack is empty. Explain this rather than memorizing the output.
+
+Objects and arrays are passed as values that happen to contain references. Spread is shallow. Immutable state updates require a new object at every changed level, or a flatter state model.
+
+Know when to use `Promise.all` versus `Promise.allSettled`, why an awaited promise is required for `try/catch`, and how debounce differs from throttle.
+
+**Practice:** implement `debounce(fn, delay)` with a `cancel()` method while preserving `this` and arguments. Test it with fake timers.
+
+## 4. TypeScript as modeling, not decoration
+
+Use strict mode. Treat external data as `unknown`, validate it at the boundary, and then pass trusted shapes through the app. `as User` does not validate runtime data.
+
+```ts
+type User = { id: string; name: string };
+
+function isUser(value: unknown): value is User {
+  if (typeof value !== "object" || value === null) return false;
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate.id === "string" && typeof candidate.name === "string";
+}
+```
+
+Model UI states with a discriminated union rather than contradictory booleans:
+
+```ts
+type AsyncState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; message: string };
+```
+
+Prefer inference, use `satisfies` when you want shape checking without widening literals, and introduce generics only when a relationship between values must be preserved. Know the difference between an optional property and a required property whose value may be `undefined`.
+
+**Practice:** implement `groupBy<T, K extends PropertyKey>`. Then type a polymorphic action where the link variant requires `href` and the button variant rejects it.
+
+[TypeScript narrowing handbook](https://www.typescriptlang.org/docs/handbook/2/narrowing.html).
+
+## 5. React: render, state, and effects
+
+A render is a snapshot. Props, state, and handlers created during that render see the values in that snapshot. Calling a setter schedules another render; it does not mutate the state variable in the current function call.
+
+Keep state minimal. If a value can be calculated from current props and state during render, do not store a second copy.
+
+```tsx
+function CartSummary({ items }: { items: Array<{ price: number; quantity: number }> }) {
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  return <strong>{total.toLocaleString("en-US")}</strong>;
+}
+```
+
+Use an effect to synchronize with an external system: network, subscription, timer, or DOM API. Do not use an effect for pure derived data or to imitate an event handler.
+
+```tsx
+useEffect(() => {
+  const controller = new AbortController();
+  void loadUser(userId, controller.signal).then(setUser).catch(handleError);
+  return () => controller.abort();
+}, [userId]);
+```
+
+Split components by responsibility and rate of change, not line count. Keep state close to its consumers, then lift it to the closest common owner when branches must stay synchronized.
+
+Recognize React 19 Actions, `useActionState`, `useOptimistic`, and `use`, but do not force them into every client app. Rendering, state ownership, effects, and debugging still matter more in an interview. Treat `useMemo` and `useCallback` as measured optimizations, not mandatory ceremony.
+
+**Practice:** build an autocomplete with loading, empty, error, request cancellation, and keyboard navigation. Implement it once without a data-fetching library, then explain how TanStack Query would change it.
+
+[React's Managing State chapter](https://react.dev/learn/managing-state).
+
+## 6. Choose state management by ownership
+
+Before naming a library, ask:
+
+1. Does the client or server own the data?
+2. How many components read and write it?
+3. How often does it change?
+4. Do you need cache, retry, deduplication, or optimistic updates?
+
+Use local state for local UI, Context for cross-tree values that change infrequently, Zustand or Redux Toolkit for shared client state that benefits from selectors and conventions, and TanStack Query/SWR or framework data fetching for server state.
+
+Redux remains valuable when a team needs explicit conventions, action history, middleware, and predictable flow. Zustand is smaller but requires the team to define its own boundaries. Context is not automatically an efficient store for rapidly changing data.
+
+**Practice:** choose owners for theme, a checkout form, a product list from an API, and a real-time game score. Defend each choice without relying on library popularity.
+
+## 7. REST APIs and asynchronous UI
+
+Understand resources, GET/POST/PUT/PATCH/DELETE, 2xx/4xx/5xx, idempotency, pagination, auth, CORS, and API contracts. A `fetch` promise does not reject for a 404 or 500; inspect `response.ok` or the status.
+
+```ts
+async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    headers: { Accept: "application/json", ...init?.headers },
+  });
+
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return (await response.json()) as T;
+}
+```
+
+The generic is still trust, not runtime validation. Validate important boundaries. Distinguish initial loading, background refresh, empty state, validation failure, and server failure. Client-side button disabling alone does not make a non-idempotent operation safe from duplicate submission.
+
+**Practice:** build a searchable, paginated user list with retry and request cancellation. Test 200, 404, 500, malformed JSON, and abort.
+
+[MDN on checking `Response.ok` and cancelling fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
+
+## 8. Performance: measure before optimizing
+
+Know the current Core Web Vitals targets:
+
+- **LCP:** at most 2.5 seconds for a good experience.
+- **INP:** at most 200 milliseconds.
+- **CLS:** at most 0.1.
+
+They are evaluated at the 75th percentile of real visits. Lighthouse provides lab data; CrUX and Search Console provide field data.
+
+Work in order: identify the slow route and device, measure with Network/Performance and React Profiler, decide whether the bottleneck is network/main-thread/render/layout, change one testable hypothesis, and measure again.
+
+Common high-value moves include sending less client JavaScript, lazy-loading heavy features, allowing the LCP resource to start early, reserving media dimensions, breaking long tasks, and caching with correct semantics. Do not virtualize a 30-item list or memoize every function without evidence.
+
+**Practice:** record LCP/INP/CLS and a waterfall for one page. Write three hypotheses, apply one change, and save before/after measurements.
+
+[web.dev guide to LCP](https://web.dev/articles/optimize-lcp/).
+
+## 9. Next.js, Git, testing, and review
+
+For the preferred Next.js experience, explain Server versus Client Components, SSR/SSG/CSR, route-based code splitting, metadata, font/image handling, and static-export limitations. In modern App Router versions, dynamic `params` are promises, and a static export must know its dynamic routes at build time.
+
+Do not put `"use client"` at the root because one small button is interactive. A poor boundary can send much more JavaScript to the browser.
+
+Keep commits focused and let messages explain why. Before opening a PR, read your own diff, run checks, remove logs, document verification, and call out risk. During review, separate blockers from suggestions and focus on correctness, maintainability, security, and tests rather than taste.
+
+Know branch/commit/rebase/merge/conflict/revert/cherry-pick/stash. Prefer `revert` over rewriting shared history without coordination.
+
+Use unit tests for pure branching logic, integration/component tests for user behavior across boundaries, and a small number of E2E tests for critical flows. Test observable behavior, not internal state names.
+
+**Practice:** review a component that fetches inside an effect without aborting, uses list indexes as keys, and has no error state. Write four comments containing severity, impact, suggestion, and the missing test.
+
+## 10. Working with BA, Backend, QA, and a Japanese client
+
+Clarify acceptance criteria, error cases, authorization, empty data, timezone, number/date formats, browser support, and API contracts before estimating. Written confirmation prevents expensive assumptions across languages and time zones.
+
+```text
+Done: list UI and loading/empty states.
+In progress: API pagination.
+Blocked: response has no totalCount; need BE decision by 15:00.
+Risk: without totalCount, UI can support only next/previous.
+```
+
+Use phrases such as “My understanding is…” and include concrete input/output examples. Raise blockers early with a fallback. For behavioral answers, use STAR but do not make teammates villains.
+
+**Practice:** write an English clarification when an API field is named `date` but the specification omits timezone. Give two examples that let the backend make one clear decision.
+
+## 11. Rapid self-check questions
+
+Answer each in 60–90 seconds:
+
+1. What causes a React component to render? Does rendering always change the DOM?
+2. When does effect cleanup run? What creates a stale closure?
+3. Controlled versus uncontrolled input?
+4. When is Context enough, and when do selectors help?
+5. `Promise.all` versus `allSettled` on a dashboard?
+6. Why does a fetch returning 500 not automatically enter `catch`?
+7. PUT versus PATCH? How does idempotency affect retry?
+8. Type guard versus type assertion at runtime?
+9. Why can a Grid/Flex item cause horizontal overflow?
+10. In what order would you diagnose a slow React page?
+11. When does memoization make code worse?
+12. Give one appropriate page for SSG, SSR, and CSR.
+13. How do you structure a multi-day branch and PR?
+14. What do you do when an API contract changes near the deadline?
+15. How do you handle a QA bug you cannot reproduce?
+
+Add one example and one trade-off to every definition. Prepare for deep follow-ups on any real project you mention.
+
+## 12. Capstone exercise
+
+Build a small Issue Board in 3–4 hours:
+
+- React and TypeScript strict.
+- Issues loaded from a mock REST API.
+- Debounced search, status filter, and pagination.
+- Loading, empty, error, retry, and stale-request cancellation.
+- Filters persisted in the URL.
+- Responsive at 360px, semantic, and keyboard usable.
+- One unit test for filtering and one integration test for error → retry → success.
+- README with decisions, trade-offs, run instructions, and the next improvement.
+
+Then ask: where does malformed API data fail, what changes at 20,000 items, and who should own state when views become user-specific?
+
+## 13. Seven-day revision plan
+
+| Day | Focus | Deliverable |
+| --- | --- | --- |
+| 1 | HTML, CSS, responsive, accessibility | Responsive keyboard-usable page with no overflow |
+| 2 | JavaScript, event loop, Promise | Tested debounce and five spoken explanations |
+| 3 | TypeScript strict | Validated API boundary and union state |
+| 4 | React render/state/effect | Autocomplete with abort and errors |
+| 5 | REST, state, performance | Issue list plus recorded performance evidence |
+| 6 | Next.js, Git, testing, review | Complete PR with self-review |
+| 7 | Mock interview and capstone | 45-minute mock and a list of weak answers |
+
+On the final evening, stop collecting new APIs. Sleep, test the camera and microphone, keep the CV and job description open, and prepare three questions: team shape, specification/review workflow, and success criteria for the first two months.

@@ -9,14 +9,14 @@ tags:
   - game
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: false
 draft: false
 ---
 
-Web Audio API tổng hợp và phát tiếng trong trình duyệt. Với một game nhỏ, vài oscillator và một gain đủ cho tiếng nhặt đồ hoặc tiếng nút. Bạn không cần file nhạc để học đồ thị âm thanh. Bài này đi một tiếng ngắn, rồi nói các lỗi khiến tiếng không kêu hoặc kêu sai.
+Một tiếng “ting” ngắn làm nút game có cảm giác thật hơn hẳn, nhưng Web Audio API ban đầu hơi khó nhìn vì mọi thứ là node và dây nối. Mình bắt đầu bằng âm thanh nhặt coin: một oscillator tạo sóng, một gain hạ âm lượng và vài mốc thời gian để tiếng tắt gọn.
 
-Hàm `playCoin` được gọi trong Node với một context giả để kiểm tra thứ tự `start` và `stop`, và để bảo đảm không có ramp mũ tới 0. Loa thật chỉ kêu trên trình duyệt. Bài không gắn một file âm thanh mẫu vào website.
+Hàm `playCoin` được test bằng context giả trong Node để kiểm tra thứ tự `start`/`stop` và tránh ramp mũ tới 0. Test không chứng minh âm thanh “hay”, nhưng chặn được vài lỗi khiến nó không kêu.
 
 ## Context bắt đầu ở trạng thái suspended
 

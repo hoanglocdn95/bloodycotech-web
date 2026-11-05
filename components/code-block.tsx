@@ -34,7 +34,7 @@ export function CodeBlock({ children, ...props }: PreProps) {
     status === "copied" ? "Đã chép" : status === "error" ? "Không chép được" : "Chép";
 
   return (
-    <div className="code-block">
+    <div className="code-block max-w-full min-w-0">
       <div className="code-toolbar">
         <span>{language}</span>
         <button type="button" onClick={onCopy}>

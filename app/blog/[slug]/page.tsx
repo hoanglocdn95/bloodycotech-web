@@ -64,11 +64,11 @@ export default async function BlogPostPage({
           { label: post.title },
         ]}
       />
-      <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,42rem)_16rem] lg:justify-center">
-        <article>
+      <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,42rem)_16rem] lg:justify-center">
+        <article className="min-w-0">
           <header>
             <CategoryBadge category={post.category} />
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">{post.title}</h1>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">{post.title}</h1>
             <p className="mt-4 text-lg leading-relaxed text-muted">{post.description}</p>
             <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
               <div>
@@ -124,7 +124,7 @@ export default async function BlogPostPage({
             </section>
           ) : null}
         </article>
-        <aside className="hidden lg:block">
+        <aside className="hidden min-w-0 lg:block">
           <TableOfContents items={post.toc} />
         </aside>
       </div>

@@ -9,14 +9,14 @@ tags:
   - frontend
 author: BloodyCoTech
 publishedAt: "2026-11-04"
-updatedAt: "2026-11-04"
+updatedAt: "2026-11-05"
 featured: true
 draft: false
 ---
 
-React vẽ giao diện. Next.js tổ chức một website bằng React: thư mục route, cách render, và một số quy ước về dữ liệu. Hai thứ không cùng tầng, nên câu hỏi “dùng React hay Next.js” thường bị đặt lệch. Bài này tách việc của từng bên, rồi đưa ra cách chọn khi bạn làm blog, công cụ nội bộ, hoặc game trên web.
+“React hay Next.js?” nghe giống một lựa chọn ngang hàng, nhưng thực ra một bên là thư viện UI còn bên kia là framework dùng React để tổ chức cả website. Mình viết bài này sau khi phải chọn stack cho chính BloodyCoTech: blog cần URL và HTML tĩnh; game nhỏ lại có thể chỉ cần một client app.
 
-Phiên bản được đối chiếu ở đây là React 19 và Next.js 16. API có thể đổi; cuối bài có tài liệu gốc để kiểm lại.
+Phần API bên dưới bám React 19 và Next.js 16. Mình ghi phiên bản vì các ví dụ cũ về App Router, đặc biệt là `params`, rất dễ không còn đúng.
 
 ## React làm phần giao diện
 

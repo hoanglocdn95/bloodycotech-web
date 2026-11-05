@@ -92,8 +92,8 @@ function FilterButton({
       onClick={onClick}
       className={
         pressed
-          ? "rounded-full bg-accent px-3 py-1.5 text-sm font-medium text-on-accent"
-          : "rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-muted hover:text-ink"
+          ? "border-2 border-line bg-accent px-3 py-1.5 font-mono text-xs font-medium text-on-accent shadow-[2px_2px_0_var(--pixel-shadow)]"
+          : "border-2 border-line bg-surface px-3 py-1.5 font-mono text-xs text-muted hover:border-accent hover:text-accent"
       }
     >
       {children}

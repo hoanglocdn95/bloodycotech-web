@@ -1,56 +1,50 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Container } from "@/components/container";
 import { Logo } from "@/components/logo";
-import { footerNav } from "@/lib/navigation";
+import { chromeCopy, localeFromPath, localizedPath } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  const locale = localeFromPath(pathname);
+  const copy = chromeCopy[locale];
   const year = new Date().getUTCFullYear();
 
   return (
-    <footer className="mt-auto border-t border-line">
-      <div className="h-0.5 bg-accent" />
-      <Container className="grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-3">
+    <footer className="mt-auto border-t-2 border-line bg-surface">
+      <div className="pixel-progress" aria-hidden="true" />
+      <Container className="grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr]">
         <div>
           <Logo />
-          <p className="mt-3 text-sm font-medium">{site.tagline}</p>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-muted">{site.description}</p>
+          <p className="mt-3 font-display text-sm text-accent">{site.tagline}</p>
+          <p className="mt-2 max-w-sm text-sm leading-6 text-muted">{copy.footerNote}</p>
         </div>
-        <nav aria-label="Chân trang">
-          <p className="text-sm font-semibold">Trang</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            {footerNav.map((item) => (
+        <nav aria-label={copy.footerNav}>
+          <p className="hud-label">MENU</p>
+          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            {copy.nav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-muted hover:text-ink">
-                  {item.label}
-                </Link>
+                <Link href={item.href} className="text-muted hover:text-accent">{item.label}</Link>
               </li>
             ))}
           </ul>
         </nav>
         <div>
-          <p className="text-sm font-semibold">Liên hệ</p>
-          {site.contactEmail ? (
-            <a
-              className="mt-3 inline-block text-sm text-accent underline underline-offset-4"
-              href={`mailto:${site.contactEmail}`}
-            >
-              {site.contactEmail}
-            </a>
-          ) : (
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Email chính thức chưa được công bố. Xem{" "}
-              <Link href="/contact/" className="text-accent underline underline-offset-4">
-                trang liên hệ
-              </Link>
-              .
-            </p>
-          )}
+          <p className="hud-label">INFO</p>
+          <div className="mt-3 flex flex-col gap-2 text-sm">
+            <Link href={localizedPath(locale, "/contact/")} className="text-muted hover:text-accent">{copy.contact}</Link>
+            <Link href={localizedPath(locale, "/privacy-policy/")} className="text-muted hover:text-accent">{copy.privacy}</Link>
+            {site.contactEmail ? <a href={`mailto:${site.contactEmail}`} className="text-accent">{site.contactEmail}</a> : null}
+          </div>
         </div>
       </Container>
-      <div className="border-t border-line">
-        <Container className="py-4 text-sm text-muted">
-          © {year} {site.name}
+      <div className="border-t-2 border-line">
+        <Container className="flex flex-wrap items-center justify-between gap-2 py-4 font-mono text-xs text-muted">
+          <span>© {year} {site.name}</span>
+          <span>BUILD_2026 // VI + EN</span>
         </Container>
       </div>
     </footer>

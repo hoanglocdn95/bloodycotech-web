@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import type { TocItem } from "@/lib/toc";
+import { localeFromPath } from "@/lib/i18n";
 
 function TocLinks({ items, active }: { items: TocItem[]; active: string }) {
   return (
@@ -26,6 +28,8 @@ function TocLinks({ items, active }: { items: TocItem[]; active: string }) {
 }
 
 export function TableOfContents({ items }: { items: TocItem[] }) {
+  const locale = localeFromPath(usePathname());
+  const title = locale === "en" ? "On this page" : "Mục lục";
   const [active, setActive] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -52,14 +56,14 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
 
   return (
     <>
-      <details className="toc-panel rounded-2xl border border-line bg-surface p-4 lg:hidden">
-        <summary className="cursor-pointer text-sm font-semibold">Mục lục</summary>
+      <details className="toc-panel pixel-card p-4 lg:hidden">
+        <summary className="cursor-pointer font-display text-sm font-semibold">{title}</summary>
         <div className="mt-3">
           <TocLinks items={items} active={active} />
         </div>
       </details>
-      <nav aria-label="Mục lục" className="toc-panel sticky top-24 hidden lg:block">
-        <p className="text-sm font-semibold">Mục lục</p>
+      <nav aria-label={title} className="toc-panel sticky top-24 hidden border-l-2 border-line pl-4 lg:block">
+        <p className="hud-label">{title}</p>
         <div className="mt-3">
           <TocLinks items={items} active={active} />
         </div>

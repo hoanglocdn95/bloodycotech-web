@@ -2,19 +2,17 @@ import { cx } from "@/lib/cx";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cx("inline-flex items-center gap-2.5 font-semibold tracking-tight", className)}>
+    <span className={cx("logo-lockup inline-flex items-center gap-2.5 font-semibold tracking-tight", className)}>
       <svg aria-hidden="true" viewBox="0 0 32 32" className="size-8 shrink-0">
-        <rect width="32" height="32" rx="8" className="fill-accent" />
+        <path d="M2 2h28v24h-4v4H6v-4H2z" className="fill-accent" />
         <path
-          d="M13 10.5 8.5 16 13 21.5M19 10.5 23.5 16 19 21.5"
+          d="M13 9 8 16l5 7M19 9l5 7-5 7"
           fill="none"
           stroke="var(--on-accent)"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          strokeWidth="2.4"
         />
       </svg>
-      <span>BloodyCoTech</span>
+      <span className="font-display text-lg">BloodyCoTech</span>
     </span>
   );
 }

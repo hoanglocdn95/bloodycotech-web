@@ -9,7 +9,7 @@ import { breadcrumbJsonLd, createMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 const description =
-  "Chính sách bảo mật của BloodyCoTech: dữ liệu lưu trên trình duyệt, nhà cung cấp hạ tầng, và quảng cáo chưa được bật.";
+  "Bản tóm tắt dễ đọc về dữ liệu lưu trên trình duyệt, hosting và trạng thái kết nối Google AdSense.";
 
 export const metadata: Metadata = createMetadata({
   title: "Chính sách bảo mật",
@@ -34,8 +34,8 @@ export default function PrivacyPage() {
       />
       <div className="mt-6">
         <PageHeader
-          eyebrow="Pháp lý"
-          title="Chính sách bảo mật"
+          eyebrow="SYSTEM_POLICY"
+          title="Bảo mật, nói cho dễ hiểu"
           description={description}
         />
       </div>
@@ -43,8 +43,8 @@ export default function PrivacyPage() {
         <p>
           Có hiệu lực từ{" "}
           <time dateTime={site.contentUpdatedAt}>{formatDate(site.contentUpdatedAt)}</time>.
-          Chính sách này mô tả đúng những gì website đang làm, và tách riêng những dịch vụ chưa
-          được bật.
+          Trang này mô tả những gì website đang làm ngay lúc này. Khi hành vi thay đổi, ngày này
+          và nội dung bên dưới phải đổi theo.
         </p>
         <h2>Ai điều hành website</h2>
         <p>
@@ -97,16 +97,16 @@ export default function PrivacyPage() {
           giao diện dùng <code>localStorage</code>, không phải cookie. Website cũng không hiện một
           bảng đồng ý cookie giả cho một dịch vụ chưa được gắn.
         </p>
-        <h2>Quảng cáo</h2>
+        <h2>Google AdSense</h2>
         <p>
-          Website hiện không hiển thị quảng cáo và không nhúng script Google AdSense. Không có đơn
-          vị quảng cáo giả trên trang.
+          Website có thẻ meta xác minh quyền sở hữu AdSense và khai báo <code>ads.txt</code> ở
+          tên miền gốc. Hai thứ này giúp Google đối chiếu site với tài khoản nhà xuất bản; chúng
+          không tự hiển thị quảng cáo.
         </p>
         {site.adsensePublisherId ? (
           <p>
-            Trang có thẻ meta <code>google-adsense-account</code> với publisher ID đã cấu hình, để
-            Google kiểm tra quyền sở hữu site. Thẻ này không tải script quảng cáo và không đặt
-            cookie quảng cáo.
+            Publisher ID đã được cấu hình trong thẻ <code>google-adsense-account</code>. Website
+            vẫn chưa tải script quảng cáo, chưa có ad unit và chưa đặt cookie quảng cáo.
           </p>
         ) : null}
         <p>
