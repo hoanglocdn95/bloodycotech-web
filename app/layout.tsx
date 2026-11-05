@@ -72,6 +72,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${sans.variable} ${mono.variable} ${display.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {site.adsensePublisherId ? (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`}
+            crossOrigin="anonymous"
+          />
+        ) : null}
+      </head>
       <body className="flex min-h-dvh flex-col bg-bg font-sans text-ink">
         <Script id="theme-init" strategy="beforeInteractive">
           {themeInitScript}

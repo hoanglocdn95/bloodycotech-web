@@ -100,10 +100,10 @@ Sửa `config/integrations.json`. Chỉ điền bằng dữ liệu thật từ t
 | --- | --- |
 | `contactEmail` | Email chính thức. Trang liên hệ và JSON-LD chỉ hiện mailto sau khi điền. |
 | `googleSiteVerification` | Mã Search Console, nếu bạn dùng cách này. Không bắt buộc trước khi gửi AdSense. |
-| `adsensePublisherId` | Đúng giá trị `ca-pub-` và 16 chữ số trong thẻ meta AdSense. Site thêm `<meta name="google-adsense-account">`, không thêm script quảng cáo. |
+| `adsensePublisherId` | Đúng giá trị `ca-pub-` và 16 chữ số. Site thêm `<meta name="google-adsense-account">` và script `adsbygoogle.js` trên mọi trang. |
 | `adsTxt` | Đúng một dòng Google cấp, dạng `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`. |
 
-`pnpm run build` ghi `out/ads.txt` chỉ khi `adsTxt` hợp lệ. Publisher ID không tự tạo `ads.txt`. Site không nhúng script quảng cáo.
+`pnpm run build` ghi `out/ads.txt` chỉ khi `adsTxt` hợp lệ. Publisher ID không tự tạo `ads.txt`. Khi `adsensePublisherId` có giá trị, mọi trang tải script AdSense tương ứng. Site không tự chèn ad unit.
 
 Trước khi gửi AdSense:
 
@@ -112,7 +112,7 @@ Trước khi gửi AdSense:
 3. Dán `adsensePublisherId` từ tài khoản AdSense, deploy, rồi bấm Verify trong AdSense.
 4. Search Console là việc riêng. Chỉ điền `googleSiteVerification` khi bạn đang xác minh bên đó.
 5. Sau khi có dòng `ads.txt` chính thức, dán vào config và deploy lại.
-6. Nếu sau này bật quảng cáo hoặc cookie, cập nhật chính sách trước khi gắn script.
+6. Khi gắn script AdSense, cập nhật chính sách bảo mật trong cùng lần deploy.
 
 Google là bên quyết định phê duyệt.
 

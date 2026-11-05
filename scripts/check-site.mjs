@@ -102,8 +102,12 @@ for (const slug of drafts) {
 }
 
 const htmlFiles = walk(outDir).filter((file) => file.endsWith(".html"));
+const adsenseSrc =
+  "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4663633976089574";
 const joined = htmlFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
-if (joined.includes("adsbygoogle")) fail("Trang đang nhúng script quảng cáo");
+if (!htmlFiles.every((file) => fs.readFileSync(file, "utf8").includes(adsenseSrc))) {
+  fail("Có trang HTML thiếu script AdSense");
+}
 if (joined.toLowerCase().includes("lorem ipsum")) fail("Còn lorem ipsum");
 const adsTxtPath = path.join(outDir, "ads.txt");
 if (!fs.existsSync(adsTxtPath)) fail("Thiếu ads.txt đã cấu hình");
@@ -151,14 +155,17 @@ if (!home.includes('rel="canonical" href="https://bloodycotech.com/"')) {
   fail("Canonical trang chủ không phải https://bloodycotech.com/");
 }
 if (!home.includes('name="google-adsense-account"')) fail("Trang chủ thiếu meta xác minh AdSense");
-if (home.includes("adsbygoogle")) fail("Trang chủ đang nhúng script quảng cáo");
+if (!home.includes(adsenseSrc)) fail("Trang chủ thiếu script AdSense");
+if (!home.includes('crossorigin="anonymous"')) fail("Script AdSense thiếu crossorigin");
 
 const privacy = fs.readFileSync(path.join(outDir, "privacy-policy/index.html"), "utf8");
 if (!privacy.includes("bloodycotech-theme")) fail("Chính sách không nhắc khóa theme");
 if (!privacy.includes("chưa")) fail("Chính sách không nói rõ phần chưa bật");
 
 const contact = fs.readFileSync(path.join(outDir, "contact/index.html"), "utf8");
-if (contact.includes("mailto:")) fail("Trang liên hệ có mailto trong khi email đang trống");
+if (!contact.includes("mailto:hoanglocdn95@gmail.com")) {
+  fail("Trang liên hệ thiếu mailto đã cấu hình");
+}
 
 const interview = fs.readFileSync(path.join(outDir, "interview/index.html"), "utf8");
 if (!interview.includes("Core Web Vitals")) fail("Trang ôn phỏng vấn thiếu nội dung performance");

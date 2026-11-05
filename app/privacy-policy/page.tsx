@@ -94,27 +94,24 @@ export default function PrivacyPage() {
         <h2>Cookie</h2>
         <p>
           BloodyCoTech không đặt cookie của riêng mình cho theme, thống kê hay quảng cáo. Lựa chọn
-          giao diện dùng <code>localStorage</code>, không phải cookie. Website cũng không hiện một
-          bảng đồng ý cookie giả cho một dịch vụ chưa được gắn.
+          giao diện dùng <code>localStorage</code>, không phải cookie. Script AdSense ở mục dưới do
+          Google chạy và có thể đặt cookie của Google.
         </p>
         <h2>Google AdSense</h2>
         <p>
-          Website có thẻ meta xác minh quyền sở hữu AdSense và khai báo <code>ads.txt</code> ở
-          tên miền gốc. Hai thứ này giúp Google đối chiếu site với tài khoản nhà xuất bản; chúng
-          không tự hiển thị quảng cáo.
+          Mỗi trang tải script <code>adsbygoogle.js</code> của Google AdSense, kèm publisher ID
+          trong cấu hình. Thẻ meta <code>google-adsense-account</code> và file <code>ads.txt</code>{" "}
+          ở tên miền gốc vẫn dùng để Google đối chiếu site với tài khoản nhà xuất bản.
         </p>
-        {site.adsensePublisherId ? (
-          <p>
-            Publisher ID đã được cấu hình trong thẻ <code>google-adsense-account</code>. Website
-            vẫn chưa tải script quảng cáo, chưa có ad unit và chưa đặt cookie quảng cáo.
-          </p>
-        ) : null}
         <p>
-          Nếu sau này có tài khoản Google AdSense được chấp thuận và quảng cáo được bật, Google có
-          thể dùng cookie để đo lượt hiển thị và, tùy cài đặt, cá nhân hóa quảng cáo. Khi việc đó
-          xảy ra, chính sách này sẽ được cập nhật trước hoặc cùng lúc với lúc bật quảng cáo, và
-          trang sẽ nói rõ cơ chế đồng ý nếu pháp luật yêu cầu. BloodyCoTech không bán dữ liệu cá
-          nhân.
+          Trang chưa đặt ad unit, nên BloodyCoTech không chèn khung quảng cáo vào bài viết. Script
+          này vẫn do Google thực thi: họ có thể xử lý dữ liệu kỹ thuật của lượt truy cập và đặt
+          cookie theo chính sách của Google, kể cả khi chưa có quảng cáo hiện trên trang.
+          BloodyCoTech không bán dữ liệu cá nhân.
+        </p>
+        <p>
+          Chính sách của Google:{" "}
+          <a href="https://policies.google.com/privacy">policies.google.com/privacy</a>.
         </p>
         <h2>Liên kết ra ngoài</h2>
         <p>
