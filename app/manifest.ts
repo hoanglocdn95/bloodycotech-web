@@ -1,24 +1,3 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/lib/site";
-
 export const dynamic = "force-static";
-
-export default function manifest(): MetadataRoute.Manifest {
-  return {
-    name: site.name,
-    short_name: site.name,
-    description: site.description,
-    start_url: "/",
-    display: "standalone",
-    background_color: "#080b16",
-    theme_color: "#5c3dff",
-    lang: "vi",
-    icons: [
-      {
-        src: "/icon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
-      },
-    ],
-  };
-}
+export default function manifest(): MetadataRoute.Manifest { return { name: "BloodyCoTech", short_name: "BloodyCoTech", description: "Draw Something. Discover Something.", start_url: "/", display: "standalone", background_color: "#faf8f3", theme_color: "#a76545", icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }] }; }

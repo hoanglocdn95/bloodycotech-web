@@ -1,35 +1,21 @@
 import type { MetadataRoute } from "next";
-import { getPublishedPosts } from "@/lib/posts";
-import { absoluteUrl, site } from "@/lib/site";
-
 export const dynamic = "force-static";
+const base = "https://bloodycotech.com";
+const pairs = [
+  ["/", "/en/"],
+  ["/about/", "/en/about/"],
+  ["/how-it-works/", "/en/how-it-works/"],
+  ["/privacy/", "/en/privacy/"],
+  ["/terms/", "/en/terms/"],
+  ["/contact/", "/en/contact/"],
+] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const newest = getPublishedPosts()[0]?.updatedAt ?? site.contentUpdatedAt;
-  const staticPages = [
-    { path: "/", lastModified: newest },
-    { path: "/blog/", lastModified: newest },
-    { path: "/projects/", lastModified: site.contentUpdatedAt },
-    { path: "/about/", lastModified: site.contentUpdatedAt },
-    { path: "/contact/", lastModified: site.contentUpdatedAt },
-    { path: "/privacy-policy/", lastModified: site.contentUpdatedAt },
-    { path: "/interview/", lastModified: site.contentUpdatedAt },
-    { path: "/en/", lastModified: site.contentUpdatedAt },
-    { path: "/en/projects/", lastModified: site.contentUpdatedAt },
-    { path: "/en/about/", lastModified: site.contentUpdatedAt },
-    { path: "/en/contact/", lastModified: site.contentUpdatedAt },
-    { path: "/en/privacy-policy/", lastModified: site.contentUpdatedAt },
-    { path: "/en/interview/", lastModified: site.contentUpdatedAt },
-  ];
-
-  return [
-    ...staticPages.map((page) => ({
-      url: absoluteUrl(page.path),
-      lastModified: page.lastModified,
-    })),
-    ...getPublishedPosts().map((post) => ({
-      url: absoluteUrl(`/blog/${post.slug}/`),
-      lastModified: post.updatedAt,
-    })),
-  ];
+  return pairs.flatMap(([vi, en]) => [vi, en].map((path) => ({
+    url: new URL(path, base).toString(),
+    lastModified: "2026-11-09",
+    changeFrequency: path === "/" || path === "/en/" ? "weekly" as const : "monthly" as const,
+    priority: path === "/" || path === "/en/" ? 1 : .7,
+    alternates: { languages: { vi: new URL(vi, base).toString(), en: new URL(en, base).toString() } },
+  })));
 }

@@ -5,13 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "node scripts/write-ads-txt.mjs",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit && tsc -p tsconfig.examples.json --noEmit",
-    "test:examples": "node scripts/test-examples.mjs",
+    "typecheck": "tsc --noEmit",
     "check:site": "node scripts/check-site.mjs",
-    "verify": "pnpm run typecheck && pnpm run lint && pnpm run test:examples && pnpm run build && pnpm run check:site"
+    "verify": "pnpm run typecheck && pnpm run lint && pnpm run build && pnpm run check:site"
   },
   "engines": {
     "node": ">=20"

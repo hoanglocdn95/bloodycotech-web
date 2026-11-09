@@ -1,0 +1,39 @@
+.centeredApp { display: flex; min-height: 28rem; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; text-align: center; }
+.label { color: var(--accent); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.modePills { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; margin-bottom: 1.5rem; }
+.modePills button { border: 1px solid var(--line); border-radius: 999px; background: var(--surface); padding: .55rem .9rem; color: var(--muted); }
+.modePills .activePill { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, white); color: var(--accent); }
+.timer { font-family: var(--font-serif), serif; font-size: clamp(5rem, 18vw, 9rem); line-height: 1; letter-spacing: -.07em; font-variant-numeric: tabular-nums; }
+.smallTimer { margin: .7rem 0 1rem; font-size: 2rem; font-variant-numeric: tabular-nums; }
+.subtle { margin: .8rem 0 1.5rem; color: var(--muted); }
+.appActions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
+.primary, .secondary { display: inline-flex; min-height: 2.8rem; align-items: center; justify-content: center; gap: .45rem; border-radius: 999px; padding: .7rem 1.1rem; font-weight: 700; }
+.primary { border: 0; background: var(--accent); color: white; }
+.secondary { border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.primary svg, .secondary svg { width: 1rem; height: 1rem; }
+.exerciseFigure { position: relative; width: 7rem; height: 8rem; margin: 1rem auto; animation: breathe 2.4s ease-in-out infinite; }
+.exerciseFigure::before { position: absolute; top: 0; left: 2.35rem; width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--accent); content: ""; }
+.exerciseFigure span { position: absolute; top: 2.1rem; left: 3.2rem; width: .65rem; height: 3.4rem; border-radius: 999px; background: var(--accent); }
+.exerciseFigure span::before, .exerciseFigure span::after, .exerciseFigure i::before, .exerciseFigure i::after { position: absolute; width: .55rem; height: 3rem; border-radius: 999px; background: var(--accent); content: ""; transform-origin: top; }
+.exerciseFigure span::before { top: .4rem; left: -.2rem; transform: rotate(52deg); }.exerciseFigure span::after { top: .4rem; right: -.2rem; transform: rotate(-52deg); }
+.exerciseFigure i::before { top: 5.2rem; left: 2.8rem; transform: rotate(18deg); }.exerciseFigure i::after { top: 5.2rem; right: 2.8rem; transform: rotate(-18deg); }
+.exerciseName { font-family: var(--font-serif), serif; font-size: 1.7rem; }
+.note { max-width: 31rem; margin-top: 1rem; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+.scene { display: grid; min-height: 31rem; overflow: hidden; border-radius: 1rem; transition: background .4s ease; }
+.scene_rain { background: linear-gradient(145deg, #71869b, #314052); }.scene_cafe { background: linear-gradient(145deg, #b97e58, #563b35); }.scene_forest { background: linear-gradient(145deg, #355d51, #122c2d); }
+.sceneWindow { position: relative; min-height: 19rem; margin: 2rem; overflow: hidden; border: .7rem solid rgba(255,255,255,.32); border-radius: .4rem; box-shadow: inset 0 0 4rem rgba(0,0,0,.3); }
+.sceneWindow::before, .sceneWindow::after { position: absolute; background: rgba(255,255,255,.28); content: ""; }.sceneWindow::before { top: 0; bottom: 0; left: 50%; width: .5rem; }.sceneWindow::after { top: 50%; right: 0; left: 0; height: .5rem; }
+.sceneMoon { position: absolute; top: 2rem; right: 2.5rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: #ffefb5; box-shadow: 0 0 2.5rem rgba(255,239,181,.7); }
+.sceneDesk { position: absolute; right: 0; bottom: 1.3rem; left: 0; height: 1rem; background: rgba(35,26,22,.7); }
+.sceneControls { display: flex; flex-direction: column; align-items: center; padding: 0 1.5rem 2rem; color: white; }
+.sceneChoices { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-bottom: 1rem; }.sceneChoices button { display: flex; align-items: center; gap: .35rem; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; background: rgba(255,255,255,.1); color: white; padding: .55rem .8rem; }.sceneChoices .sceneActive { background: white; color: #31343b; }
+.sceneControls .note { color: rgba(255,255,255,.72); text-align: center; }
+.quoteApp, .story { display: flex; min-height: 28rem; max-width: 48rem; margin: auto; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+.quoteMark { height: 4rem; color: var(--accent); font-family: var(--font-serif), serif; font-size: 7rem; line-height: 1; opacity: .35; }
+.quoteApp blockquote { max-width: 40rem; font-family: var(--font-serif), serif; font-size: clamp(1.8rem, 5vw, 3rem); line-height: 1.25; }
+.quoteApp cite { margin: 1rem 0 1.8rem; color: var(--muted); font-style: normal; }
+.story h3 { margin: .8rem 0 1rem; font-family: var(--font-serif), serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; }.story > p:not(.label) { max-width: 42rem; margin-bottom: 1.8rem; color: var(--muted); font-family: var(--font-serif), serif; font-size: 1.2rem; line-height: 1.9; }
+@keyframes breathe { 50% { transform: translateY(-.35rem) rotate(2deg); } }
+@media (prefers-reduced-motion: reduce) { .exerciseFigure { animation: none; } }
+@media (min-width: 48rem) { .scene { grid-template-columns: 1.2fr .8fr; }.sceneControls { justify-content: center; padding: 2rem; }.sceneWindow { min-height: 25rem; } }
+

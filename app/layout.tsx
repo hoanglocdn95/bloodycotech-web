@@ -1,99 +1,25 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Chakra_Petch, IBM_Plex_Mono } from "next/font/google";
-import Script from "next/script";
-import { JsonLd } from "@/components/json-ld";
-import { DocumentLocale } from "@/components/document-locale";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
-import { SkipLink } from "@/components/skip-link";
-import { siteJsonLd } from "@/lib/seo";
-import { site, themeInitScript } from "@/lib/site";
+import { Be_Vietnam_Pro, Lora } from "next/font/google";
+import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
-const sans = Be_Vietnam_Pro({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "600"],
-  variable: "--font-be-vietnam",
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-ibm-mono",
-  display: "swap",
-});
-
-const display = Chakra_Petch({
-  subsets: ["latin", "vietnamese"],
-  weight: ["600", "700"],
-  variable: "--font-chakra",
-  display: "swap",
-});
+const sans = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["400", "600"], variable: "--font-sans", display: "swap" });
+const serif = Lora({ subsets: ["latin", "vietnamese"], weight: ["400", "600"], variable: "--font-serif", display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name} — ${site.tagline}`,
-    template: `%s · ${site.name}`,
-  },
-  description: site.description,
-  applicationName: site.name,
-  authors: [{ name: site.authorName, url: site.url }],
-  creator: site.authorName,
+  metadataBase: new URL("https://bloodycotech.com"),
+  title: { default: "BloodyCoTech — Draw Something. Discover Something.", template: "%s · BloodyCoTech" },
+  description: "Vẽ một điều gì đó. BloodyCoTech sẽ tìm một app, game hoặc câu chuyện có thể phù hợp với bạn ngay lúc này.",
+  applicationName: "BloodyCoTech",
+  authors: [{ name: "BloodyCoTech", url: siteConfig.url }],
+  creator: "BloodyCoTech",
   icons: { icon: "/icon.svg" },
-  alternates: { canonical: site.url },
-  openGraph: {
-    type: "website",
-    locale: site.locale,
-    url: site.url,
-    siteName: site.name,
-    title: `${site.name} — ${site.tagline}`,
-    description: site.description,
-  },
-  twitter: {
-    card: "summary",
-    title: `${site.name} — ${site.tagline}`,
-    description: site.description,
-  },
   robots: { index: true, follow: true },
-  ...(site.googleSiteVerification
-    ? { verification: { google: site.googleSiteVerification } }
-    : {}),
-  ...(site.adsensePublisherId
-    ? { other: { "google-adsense-account": site.adsensePublisherId } }
-    : {}),
+  alternates: { canonical: "/", languages: { vi: "/", en: "/en/", "x-default": "/" } },
+  openGraph: { type: "website", url: "https://bloodycotech.com", siteName: "BloodyCoTech", title: "BloodyCoTech — Draw Something. Discover Something.", description: "A private, client-only drawing experience that gradually becomes your own." },
+  other: { "google-adsense-account": siteConfig.adsensePublisherId },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html
-      lang="vi"
-      className={`${sans.variable} ${mono.variable} ${display.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <head>
-        {site.adsensePublisherId ? (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`}
-            crossOrigin="anonymous"
-          />
-        ) : null}
-      </head>
-      <body className="flex min-h-dvh flex-col bg-bg font-sans text-ink">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
-        <DocumentLocale />
-        <SkipLink />
-        <SiteHeader />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
-        <JsonLd data={siteJsonLd()} />
-      </body>
-    </html>
-  );
+  return <html lang="vi" data-scroll-behavior="smooth" className={`${sans.variable} ${serif.variable}`}><body>{children}</body></html>;
 }

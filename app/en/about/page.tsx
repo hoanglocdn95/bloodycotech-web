@@ -1,26 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Breadcrumb } from "@/components/breadcrumb";
-import { Container } from "@/components/container";
-import { PageHeader } from "@/components/page-header";
-import { createMetadata } from "@/lib/seo";
+import { InformationPage } from "@/components/information-page";
 
-const description = "The person, working principles, and direction behind BloodyCoTech.";
-export const metadata: Metadata = createMetadata({ title: "About", description, path: "/en/about/" });
+export const metadata: Metadata = { title: "About", description: "Why BloodyCoTech begins with a blank canvas and grows into a personal corner in your browser.", alternates: { canonical: "/en/about/", languages: { vi: "/about/", en: "/en/about/" } } };
 
 export default function EnglishAboutPage() {
-  return <div lang="en"><Container className="py-10 sm:py-14">
-    <Breadcrumb items={[{ label: "Home", href: "/en/" }, { label: "About" }]} />
-    <div className="mt-7"><PageHeader eyebrow="PLAYER_PROFILE" title="About BloodyCoTech" description={description} /></div>
-    <div className="article-body mt-10 max-w-3xl">
-      <p>BloodyCoTech is my personal corner of the web. I use it to make my learning visible: notes I have checked, interview topics I am actively revising, and small web products that can be opened and tested.</p>
-      <h2>Why this site exists</h2>
-      <p>Bookmarks are good for collecting links but poor at proving understanding. Writing forces me to choose an example, name a trade-off, and notice what I still cannot explain. When an article becomes outdated, I want the date and source links to make that visible too.</p>
-      <h2>What I write about</h2>
-      <p>The current focus is frontend engineering: React, TypeScript, browser APIs, responsive interfaces, web performance, and the small game systems that make the browser fun to work with.</p>
-      <h2>Ground rules</h2>
-      <ul><li>No invented clients, users, download counts, or testimonials.</li><li>Examples should run or be type-checked where practical.</li><li>A project gets an honest status: experiment, active build, released, or archived.</li><li>Corrections are welcome; quiet confidence is better than pretending to know everything.</li></ul>
-      <p>Start with the <Link href="/en/interview/">interview training room</Link>, or read the <Link href="/blog/">Vietnamese technical notes</Link>.</p>
-    </div>
-  </Container></div>;
+  return <InformationPage locale="en" alternateHref="/about/" eyebrow="An independent project" title="BloodyCoTech is being built by one person" intro="I want this domain to be useful even when a visitor does not want an account, a form, or a long article.">
+    <p>BloodyCoTech used to be a place for my frontend notes. This version follows a more focused idea: draw a few marks, let the app observe measurable traits, and receive a small experience you can try immediately.</p>
+    <h2>Why begin with a drawing?</h2>
+    <p>A blank page can feel lighter than a questionnaire. You do not have to label an emotion or disclose a private story. The drawing is input for a small on-device algorithm, not a personality test.</p>
+    <h2>What I want to preserve</h2>
+    <ul><li>Never pretend to know exactly what a visitor is thinking.</li><li>Never require an account for the basic experience.</li><li>Never upload drawings or sell personal data.</li><li>Every listed app and game should actually work.</li></ul>
+    <h2>A product that is still growing</h2>
+    <p>Focus, movement, work scenes, mini-games, and board games form the first collection. “This fits” and “Not for me” only adjust a local profile on your device. You can inspect or erase that profile from My corner.</p>
+    <p>Read the technical explanation in <Link href="/en/how-it-works/">How BloodyCoTech works</Link>.</p>
+  </InformationPage>;
 }
