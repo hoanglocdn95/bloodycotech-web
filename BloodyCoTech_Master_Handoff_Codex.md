@@ -2,6 +2,11 @@
 Version: 1.0 | 2026-11-09 | Language: Vietnamese
 Status: Product direction confirmed; implementation and infrastructure decisions subject to repository audit.
 
+## KIM CHỈ NAM
+Chúng ta tạo ra trang web này, nhưng hình dạng, cách hiển thị và nội dung của nó tùy vào mỗi người dùng. Trang sẽ tùy biến và cá nhân hóa theo chủ nhân thật sự của nó: user.
+
+Trải nghiệm mở đầu không mang dấu ấn của người làm trang và không được trông như một website lặp lại: không header, không footer, không logo, không thanh điều hướng. Lúc đầu chỉ là trang giấy trắng, rồi các câu chữ, rồi bản vẽ. Những gì user vẽ và gửi đi là căn cứ để đoán giao diện nào hợp với người đó.
+
 ## 0. NHIỆM VỤ
 Chuyển đổi website hiện có `bloodycotech.com` từ blog công nghệ thành một nền tảng trải nghiệm cá nhân hóa bắt đầu bằng nét vẽ. Đây là định hướng thay thế sản phẩm hiện tại trên cùng domain, KHÔNG phải thêm một trang con. Không tự ý xóa blog, dữ liệu, cấu hình SEO hay tài sản cũ: kiểm kê, backup và lập phương án redirect/archival trước khi thay đổi.
 

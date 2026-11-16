@@ -1,27 +1,21 @@
-.studio { width: min(100%, 74rem); margin: 0 auto; padding: 2.5rem 1rem 4rem; }
-.invitation { max-width: 44rem; margin: 0 auto 1.8rem; text-align: center; }
-.kicker { margin-bottom: .8rem; color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.invitation h1 { font-family: var(--font-serif), serif; font-size: clamp(2.25rem, 7vw, 4.8rem); font-weight: 500; letter-spacing: -.045em; line-height: 1.02; }
-.invitation > p:last-child { max-width: 39rem; margin: 1rem auto 0; color: var(--muted); font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.75; }
-.paper { overflow: hidden; border: 1px solid var(--line); border-radius: 1.4rem; background: #fffefa; box-shadow: 0 1.5rem 4rem rgba(63, 51, 42, .09); }
-.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; border-bottom: 1px solid #e9e3d9; padding: .75rem; }
-.colors, .tools { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
-.colors button, .tools button, .customColor { display: inline-flex; width: 2.45rem; height: 2.45rem; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 999px; background: transparent; color: #4b4d53; cursor: pointer; }
+.studio { position: relative; height: 100%; width: 100%; overflow: hidden; padding: clamp(.65rem, 1.6vmin, 1.1rem); }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.paper { position: relative; width: 100%; height: 100%; border-radius: 2px; background: #fffef8; box-shadow: 0 1rem 2.8rem rgba(62, 52, 42, .12), 0 0 0 1px rgba(80, 68, 54, .06); }
+.canvasWrap { position: absolute; inset: 0; }
+.canvas { display: block; width: 100%; height: 100%; cursor: url("/pencil-cursor.png?v=2") 16 52, crosshair; touch-action: none; }
+.empty { position: absolute; top: 50%; left: 50%; width: 80%; transform: translate(-50%, -50%); pointer-events: none; color: #b7b1a7; text-align: center; font-family: var(--font-serif), serif; font-size: clamp(.95rem, 2vw, 1.2rem); }
+.guide { position: absolute; top: 1.1rem; left: 50%; z-index: 2; width: max-content; max-width: min(18rem, calc(100% - 2rem)); transform: translateX(-50%); border-radius: .85rem; background: rgba(255, 254, 248, .96); box-shadow: 0 .6rem 1.4rem rgba(62, 52, 42, .08); padding: .65rem .8rem; color: #4c4944; font-size: .84rem; line-height: 1.4; text-align: center; pointer-events: none; }
+.toolToggle { position: fixed; top: 1rem; right: 1rem; z-index: 6; display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid rgba(80, 68, 54, .14); border-radius: 999px; background: #fffef8; box-shadow: 0 .35rem 1rem rgba(62, 52, 42, .1); }
+.toolToggle span { width: 1.05rem; height: 1.05rem; border: 1px solid rgba(0, 0, 0, .16); border-radius: 999px; }
+.toolPanel { position: fixed; top: 4.1rem; right: 1rem; z-index: 6; display: grid; gap: .2rem; width: max-content; max-width: min(16.5rem, calc(100vw - 2rem)); border: 1px solid rgba(80, 68, 54, .1); border-radius: .95rem; background: rgba(255, 254, 248, .97); box-shadow: 0 .8rem 2rem rgba(62, 52, 42, .12); padding: .35rem; }
+.colors, .tools { display: flex; flex-wrap: wrap; align-items: center; gap: .15rem; }
+.colors button, .tools button, .customColor { display: inline-flex; width: 2.15rem; height: 2.15rem; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 999px; background: transparent; color: #4b4d53; cursor: pointer; }
 .colors button:hover, .tools button:hover, .customColor:hover, .activeTool { border-color: #d3c9bb !important; background: #f4efe7 !important; }
-.colors button span, .customColor span { width: 1.15rem; height: 1.15rem; border: 1px solid rgba(0,0,0,.12); border-radius: 999px; }
+.colors button span, .customColor span { width: 1rem; height: 1rem; border: 1px solid rgba(0, 0, 0, .12); border-radius: 999px; }
 .customColor { position: relative; }
 .customColor input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.tools button svg { width: 1.05rem; height: 1.05rem; }
+.tools button svg { width: 1rem; height: 1rem; }
 .tools button i { display: block; border-radius: 999px; background: currentColor; }
 .tools button:disabled { cursor: not-allowed; opacity: .28; }
-.canvasWrap { position: relative; background-image: radial-gradient(rgba(86, 74, 58, .08) .7px, transparent .7px); background-size: 18px 18px; }
-.canvas { display: block; width: 100%; height: clamp(25rem, 58vw, 43rem); cursor: crosshair; touch-action: none; }
-.empty { position: absolute; top: 50%; left: 50%; width: 80%; transform: translate(-50%, -50%); pointer-events: none; color: #aaa196; text-align: center; font-family: var(--font-serif), serif; font-size: clamp(1rem, 2.5vw, 1.35rem); }
-.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem 1rem; margin-top: 1.5rem; }
-.done { min-width: 10rem; border: 0; border-radius: 999px; background: var(--accent); color: white; padding: .9rem 1.4rem; font-weight: 700; box-shadow: 0 .55rem 1.4rem color-mix(in srgb, var(--accent) 22%, transparent); }
-.done:hover:not(:disabled) { transform: translateY(-2px); }
-.done:disabled { cursor: not-allowed; opacity: .35; }
-.textAction { border: 0; background: transparent; color: var(--muted); padding: .8rem .25rem; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--muted) 35%, transparent); text-underline-offset: .28rem; }
-.privacy { max-width: 42rem; margin: 1rem auto 0; color: var(--muted); font-size: .76rem; line-height: 1.6; text-align: center; }
-@media (max-width: 42rem) { .studio { padding-top: 1.5rem; } .toolbar { align-items: flex-start; } .colors { width: 100%; } .paper { border-radius: 1rem; } .canvas { height: 29rem; } }
-
+.done { position: fixed; bottom: 1rem; left: 1rem; z-index: 6; border: 0; border-radius: 999px; background: var(--accent); color: white; padding: .55rem .95rem; font-size: .84rem; font-weight: 700; box-shadow: 0 .4rem 1rem color-mix(in srgb, var(--accent) 24%, transparent); }
+.done:disabled { cursor: not-allowed; opacity: .4; }

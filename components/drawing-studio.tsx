@@ -10,11 +10,9 @@ const widths = [3, 7, 14];
 
 const copy = {
   vi: {
-    invitation: "Hôm nay bạn thế nào?",
-    body: "Bạn có thể vẽ cho mình một điều gì đó không? Mình sẽ thử tìm một trải nghiệm có thể phù hợp với bạn. Không cần vẽ đẹp đâu.",
+    guide: "Kéo hoặc chạm để vẽ.",
+    tools: "Màu và nét",
     done: "Xong rồi!",
-    skip: "Mình không muốn vẽ",
-    library: "Khám phá thư viện",
     empty: "Trang giấy đang chờ nét đầu tiên của bạn.",
     undo: "Hoàn tác",
     redo: "Làm lại",
@@ -22,15 +20,12 @@ const copy = {
     pen: "Bút",
     clear: "Xóa hết",
     clearConfirm: "Xóa toàn bộ bức vẽ này?",
-    privacy: "Tranh chỉ tồn tại trong bộ nhớ của trang này. Khi hoàn thành, app chỉ giữ các thông số bằng số — không giữ ảnh hoặc nét vẽ.",
     canvas: "Vùng vẽ cá nhân",
   },
   en: {
-    invitation: "How are you today?",
-    body: "Would you draw something for me? I will try to find an experience that may fit you. It does not have to be beautiful.",
+    guide: "Drag or touch to draw.",
+    tools: "Colour and stroke",
     done: "I'm done!",
-    skip: "I don't want to draw",
-    library: "Explore the library",
     empty: "The page is waiting for your first mark.",
     undo: "Undo",
     redo: "Redo",
@@ -38,21 +33,18 @@ const copy = {
     pen: "Pen",
     clear: "Clear",
     clearConfirm: "Clear this entire drawing?",
-    privacy: "Your drawing only exists in this page's memory. When you finish, the app keeps numeric signals—not the image or strokes.",
     canvas: "Personal drawing area",
   },
 } as const;
 
 export function DrawingStudio({
   locale,
+  ready,
   onComplete,
-  onSkip,
-  onLibrary,
 }: {
   locale: Locale;
+  ready: boolean;
   onComplete: (strokes: DrawingStroke[]) => void;
-  onSkip: () => void;
-  onLibrary: () => void;
 }) {
   const t = copy[locale];
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -64,6 +56,23 @@ export function DrawingStudio({
   const [width, setWidth] = useState(widths[1]);
   const [erasing, setErasing] = useState(false);
   const [customColor, setCustomColor] = useState("#5f7dd8");
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [guide, setGuide] = useState<"off" | "hover" | "idle">("off");
+  const acted = useRef(false);
+
+  const markActed = () => {
+    if (acted.current) return;
+    acted.current = true;
+    setGuide("off");
+  };
+
+  useEffect(() => {
+    if (!ready) return;
+    const id = window.setTimeout(() => {
+      if (!acted.current) setGuide("idle");
+    }, 5000);
+    return () => window.clearTimeout(id);
+  }, [ready]);
 
   useEffect(() => {
     strokesRef.current = strokes;
@@ -159,16 +168,50 @@ export function DrawingStudio({
 
   const visibleStrokes = strokes.filter((stroke) => !stroke.erase);
 
+  const showHover = (event: React.PointerEvent) => {
+    if (!ready || event.pointerType !== "mouse" || acted.current) return;
+    setGuide((current) => (current === "idle" ? "idle" : "hover"));
+  };
+
+  const hideHover = () => {
+    setGuide((current) => (current === "hover" ? "off" : current));
+  };
+
   return (
-    <section className={styles.studio}>
-      <div className={styles.invitation}>
-        <p className={styles.kicker}>Draw something · Discover something</p>
-        <h1>{t.invitation}</h1>
-        <p>{t.body}</p>
+    <section className={styles.studio} onPointerDownCapture={markActed}>
+      <h1 className={styles.srOnly}>{t.canvas}</h1>
+      <div
+        className={styles.paper}
+        onPointerEnter={showHover}
+        onPointerLeave={hideHover}
+        data-guide={guide}
+      >
+        <div className={styles.canvasWrap}>
+          <canvas
+            ref={canvasRef}
+            className={styles.canvas}
+            aria-label={t.canvas}
+            onPointerDown={start}
+            onPointerMove={move}
+            onPointerUp={finish}
+            onPointerCancel={finish}
+          />
+          {!strokes.length && guide === "off" ? <p className={styles.empty}>{t.empty}</p> : null}
+          {guide !== "off" ? <p className={styles.guide} role="status">{t.guide}</p> : null}
+        </div>
       </div>
 
-      <div className={styles.paper}>
-        <div className={styles.toolbar}>
+      <button
+        type="button"
+        className={styles.toolToggle}
+        aria-expanded={toolsOpen}
+        aria-label={t.tools}
+        onClick={() => setToolsOpen((open) => !open)}
+      >
+        <span style={{ background: erasing ? "transparent" : color }} />
+      </button>
+      {toolsOpen ? (
+        <div className={styles.toolPanel}>
           <div className={styles.colors} aria-label={locale === "vi" ? "Màu bút" : "Pen colours"}>
             {colors.map((item) => (
               <button
@@ -216,27 +259,8 @@ export function DrawingStudio({
             ><RotateCcw /></button>
           </div>
         </div>
-
-        <div className={styles.canvasWrap}>
-          <canvas
-            ref={canvasRef}
-            className={styles.canvas}
-            aria-label={t.canvas}
-            onPointerDown={start}
-            onPointerMove={move}
-            onPointerUp={finish}
-            onPointerCancel={finish}
-          />
-          {!strokes.length ? <p className={styles.empty}>{t.empty}</p> : null}
-        </div>
-      </div>
-
-      <div className={styles.actions}>
-        <button type="button" className={styles.done} disabled={!visibleStrokes.length} onClick={() => onComplete(strokes)}>{t.done}</button>
-        <button type="button" className={styles.textAction} onClick={onSkip}>{t.skip}</button>
-        <button type="button" className={styles.textAction} onClick={onLibrary}>{t.library}</button>
-      </div>
-      <p className={styles.privacy}>{t.privacy}</p>
+      ) : null}
+      <button type="button" className={styles.done} disabled={!visibleStrokes.length} onClick={() => onComplete(strokes)}>{t.done}</button>
     </section>
   );
 }

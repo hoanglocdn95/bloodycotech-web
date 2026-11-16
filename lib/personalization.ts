@@ -1,22 +1,8 @@
+import { experienceCatalog as catalogSource } from "./experience-catalog";
+
 export type Locale = "vi" | "en";
-
-export type ExperienceId =
-  | "pomodoro"
-  | "exercise"
-  | "work-scene"
-  | "lines98"
-  | "gold-miner"
-  | "dino-run"
-  | "quotes"
-  | "story"
-  | "pachinko"
-  | "chess"
-  | "xiangqi"
-  | "go"
-  | "jungle"
-  | "gomoku";
-
-export type ExperienceKind = "app" | "game" | "story";
+export type ExperienceId = (typeof catalogSource)[number]["id"];
+export type ExperienceKind = (typeof catalogSource)[number]["kind"];
 
 export type DrawingPoint = { x: number; y: number; time: number };
 export type DrawingStroke = {
@@ -93,120 +79,21 @@ const emptyNumbers: AnalysisNumbers = {
   playfulness: 50,
 };
 
-export const experienceCatalog: ExperienceDefinition[] = [
-  {
-    id: "pomodoro",
-    kind: "app",
-    icon: "◷",
-    title: { vi: "Nhịp tập trung", en: "Focus rhythm" },
-    description: { vi: "Một đồng hồ Pomodoro gọn nhẹ để bắt đầu việc đang chờ.", en: "A quiet Pomodoro timer for the task waiting in front of you." },
-    target: { energy: 52, pressure: 58, openness: 38, focus: 88, warmth: 48, playfulness: 28 },
+export const experienceCatalog: ExperienceDefinition[] = catalogSource.map((item) => ({
+  id: item.id,
+  kind: item.kind,
+  icon: item.icon,
+  title: { vi: item.title.vi, en: item.title.en },
+  description: { vi: item.description.vi, en: item.description.en },
+  target: {
+    energy: item.target.energy,
+    pressure: item.target.pressure,
+    openness: item.target.openness,
+    focus: item.target.focus,
+    warmth: item.target.warmth,
+    playfulness: item.target.playfulness,
   },
-  {
-    id: "exercise",
-    kind: "app",
-    icon: "↟",
-    title: { vi: "Vận động một chút", en: "Move a little" },
-    description: { vi: "Chuỗi vận động ngắn 3–8 phút, không cần dụng cụ.", en: "A short 3–8 minute movement break with no equipment." },
-    target: { energy: 72, pressure: 68, openness: 58, focus: 42, warmth: 62, playfulness: 55 },
-  },
-  {
-    id: "work-scene",
-    kind: "app",
-    icon: "⌂",
-    title: { vi: "Góc làm việc", en: "Work scene" },
-    description: { vi: "Chọn mưa, quán nhỏ hoặc rừng đêm và tạo âm thanh ngay trên máy.", en: "Choose rain, a small café, or a night forest with locally generated sound." },
-    target: { energy: 34, pressure: 62, openness: 72, focus: 76, warmth: 55, playfulness: 32 },
-  },
-  {
-    id: "lines98",
-    kind: "game",
-    icon: "●",
-    title: { vi: "Lines 98", en: "Lines 98" },
-    description: { vi: "Xếp năm viên cùng màu trước khi bàn cờ đầy.", en: "Line up five matching balls before the board fills." },
-    target: { energy: 46, pressure: 42, openness: 50, focus: 78, warmth: 55, playfulness: 72 },
-  },
-  {
-    id: "gold-miner",
-    kind: "game",
-    icon: "◇",
-    title: { vi: "Đào vàng", en: "Gold Miner" },
-    description: { vi: "Canh góc móc, kéo vàng lên và đừng phí thời gian vào đá.", en: "Time the hook, pull up gold, and leave the heavy rocks behind." },
-    target: { energy: 78, pressure: 55, openness: 58, focus: 70, warmth: 62, playfulness: 86 },
-  },
-  {
-    id: "dino-run",
-    kind: "game",
-    icon: "♟",
-    title: { vi: "Khủng long chạy", en: "Dino Run" },
-    description: { vi: "Nhảy qua xương rồng trong một trò chạy vô tận tối giản.", en: "Jump over cacti in a minimal endless runner." },
-    target: { energy: 80, pressure: 48, openness: 64, focus: 66, warmth: 48, playfulness: 84 },
-  },
-  {
-    id: "quotes",
-    kind: "story",
-    icon: "“",
-    title: { vi: "Một câu để mang theo", en: "A line to carry" },
-    description: { vi: "Danh sách câu nói nổi tiếng, dí dỏm và đôi khi rất đời.", en: "Famous, witty, and occasionally very human lines." },
-    target: { energy: 32, pressure: 50, openness: 64, focus: 58, warmth: 76, playfulness: 58 },
-  },
-  {
-    id: "story",
-    kind: "story",
-    icon: "≈",
-    title: { vi: "Truyện thật ngắn", en: "A tiny story" },
-    description: { vi: "Một câu chuyện đủ ngắn để đọc trong một lần thở chậm.", en: "A story short enough to read in one slow breath." },
-    target: { energy: 24, pressure: 46, openness: 74, focus: 48, warmth: 82, playfulness: 44 },
-  },
-  {
-    id: "pachinko",
-    kind: "game",
-    icon: "⋮",
-    title: { vi: "Máy Pachinko", en: "Pachinko" },
-    description: { vi: "Thả bi qua một rừng chốt và xem nó tìm đường.", en: "Drop balls through a field of pins and watch them find a path." },
-    target: { energy: 56, pressure: 35, openness: 82, focus: 32, warmth: 62, playfulness: 92 },
-  },
-  {
-    id: "chess",
-    kind: "game",
-    icon: "♞",
-    title: { vi: "Cờ vua", en: "Chess" },
-    description: { vi: "Đấu cờ vua với bot bốn cấp độ.", en: "Play chess against a four-level bot." },
-    target: { energy: 42, pressure: 44, openness: 38, focus: 92, warmth: 38, playfulness: 46 },
-  },
-  {
-    id: "xiangqi",
-    kind: "game",
-    icon: "將",
-    title: { vi: "Cờ tướng", en: "Xiangqi" },
-    description: { vi: "Pháo, sông và cửu cung trên một bàn cờ riêng.", en: "Cannons, river, and palaces on a dedicated board." },
-    target: { energy: 52, pressure: 48, openness: 36, focus: 90, warmth: 46, playfulness: 48 },
-  },
-  {
-    id: "go",
-    kind: "game",
-    icon: "○",
-    title: { vi: "Cờ vây", en: "Go" },
-    description: { vi: "Bàn 9×9 với luật khí, bắt quân và ko.", en: "A 9×9 board with liberties, captures, and ko." },
-    target: { energy: 28, pressure: 35, openness: 62, focus: 95, warmth: 42, playfulness: 38 },
-  },
-  {
-    id: "jungle",
-    kind: "game",
-    icon: "虎",
-    title: { vi: "Cờ thú", en: "Jungle" },
-    description: { vi: "Hang, bẫy, sông và tám loài vật.", en: "Dens, traps, rivers, and eight animals." },
-    target: { energy: 62, pressure: 40, openness: 62, focus: 76, warmth: 65, playfulness: 78 },
-  },
-  {
-    id: "gomoku",
-    kind: "game",
-    icon: "五",
-    title: { vi: "Cờ caro", en: "Gomoku" },
-    description: { vi: "Đặt năm quân liên tiếp trước bot.", en: "Place five stones in a row before the bot." },
-    target: { energy: 50, pressure: 40, openness: 50, focus: 84, warmth: 50, playfulness: 66 },
-  },
-];
+}));
 
 function clamp(value: number, min = 0, max = 100) {
   return Math.min(max, Math.max(min, value));
@@ -387,12 +274,16 @@ export function recordFeedback(profile: LocalProfile, id: ExperienceId, value: -
   return next;
 }
 
-export function rankExperiences(analysis: AnalysisNumbers, profile: LocalProfile) {
+export function rankExperiences(
+  analysis: AnalysisNumbers,
+  profile: LocalProfile,
+  catalog: readonly ExperienceDefinition[] = experienceCatalog,
+) {
   const blended = { ...analysis };
   if (profile.sessions > 1) {
     for (const key of signalKeys) blended[key] = analysis[key] * 0.7 + profile.average[key] * 0.3;
   }
-  return experienceCatalog
+  return catalog
     .map((experience) => {
       const distance = signalKeys.reduce((sum, key) => sum + Math.abs(blended[key] - experience.target[key]), 0) / signalKeys.length;
       const preference = (profile.feedback[experience.id] ?? 0) * 8;
