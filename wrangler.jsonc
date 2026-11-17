@@ -5,15 +5,21 @@
   "compatibility_date": "2026-11-16",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "bloodycotech-catalog",
       // Replace this placeholder with the id printed by `wrangler d1 create bloodycotech-catalog`.
-      "database_id": "00000000-0000-0000-0000-000000000000",
-      "migrations_dir": "migrations"
-    }
-  ]
+      "database_id": "69ed210b-89cd-420b-8c40-6534f69738fa",
+      "migrations_dir": "migrations",
+    },
+    {
+      "binding": "bloodycotech_catalog",
+      "database_name": "bloodycotech-catalog",
+      "database_id": "69ed210b-89cd-420b-8c40-6534f69738fa",
+      "remote": true,
+    },
+  ],
 }
